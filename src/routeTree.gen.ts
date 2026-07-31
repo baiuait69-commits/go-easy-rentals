@@ -10,11 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresaRoute = EmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservasRoute = ReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ViaturaIdRoute = ViaturaIdRouteImport.update({
@@ -25,27 +43,39 @@ const ViaturaIdRoute = ViaturaIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/empresa': typeof EmpresaRoute
+  '/perfil': typeof PerfilRoute
+  '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/empresa': typeof EmpresaRoute
+  '/perfil': typeof PerfilRoute
+  '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/empresa': typeof EmpresaRoute
+  '/perfil': typeof PerfilRoute
+  '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/viatura/$id'
+  fullPaths: '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/viatura/$id'
-  id: '__root__' | '/' | '/viatura/$id'
+  to: '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
+  id: '__root__' | '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmpresaRoute: typeof EmpresaRoute
+  PerfilRoute: typeof PerfilRoute
+  ReservasRoute: typeof ReservasRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
 }
 
@@ -56,6 +86,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresa': {
+      id: '/empresa'
+      path: '/empresa'
+      fullPath: '/empresa'
+      preLoaderRoute: typeof EmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservas': {
+      id: '/reservas'
+      path: '/reservas'
+      fullPath: '/reservas'
+      preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/viatura/$id': {
@@ -70,8 +121,21 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmpresaRoute: EmpresaRoute,
+  PerfilRoute: PerfilRoute,
+  ReservasRoute: ReservasRoute,
   ViaturaIdRoute: ViaturaIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
