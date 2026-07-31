@@ -78,21 +78,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kubuka — Aluguer de viaturas em Angola" },
+      { title: "Kubuka — Alugue viaturas perto de si" },
       {
         name: "description",
         content:
-          "Reserve viaturas em tempo real em Luanda: filtros, entrega onde estiver, motorista opcional e pagamento por Multicaixa Express.",
+          "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real.",
       },
       { name: "author", content: "Kubuka" },
-      { property: "og:title", content: "Kubuka — Aluguer de viaturas em Angola" },
+      { property: "og:title", content: "Kubuka — Alugue viaturas perto de si" },
       {
         property: "og:description",
-        content: "Aluguer de viaturas por hora, dia, semana ou mês, com entrega onde estiver.",
+        content: "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Kubuka — Alugue viaturas perto de si" },
+      { name: "twitter:description", content: "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ad749e7b-39d9-45fb-ac77-536dab3c6768/id-preview-e5f470ec--08116dc0-89b8-44c2-b6cc-e3795d49c460.lovable.app-1785517703952.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ad749e7b-39d9-45fb-ac77-536dab3c6768/id-preview-e5f470ec--08116dc0-89b8-44c2-b6cc-e3795d49c460.lovable.app-1785517703952.png" },
     ],
     links: [
       {

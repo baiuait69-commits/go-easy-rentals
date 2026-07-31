@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Kubuka — Alugue viaturas perto de si" },
       {
         property: "og:description",
-        content: "Pesquisa por localização, reserva em tempo real e entrega onde estiver.",
+        content: "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real.",
       },
     ],
   }),
