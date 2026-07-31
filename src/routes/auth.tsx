@@ -38,6 +38,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [emailEnviado, setEmailEnviado] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/", replace: true });
@@ -91,7 +92,24 @@ function AuthPage() {
       navigate({ to: "/", replace: true });
       return;
     }
+    setEmailEnviado(dados.email);
     toast.success("Conta criada. Confirme o email para entrar.");
+  }
+
+  async function reenviar() {
+    if (!emailEnviado) return;
+    setBusy(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: emailEnviado,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setBusy(false);
+    if (error) {
+      toast.error("Não foi possível reenviar agora. Tente daqui a pouco.");
+      return;
+    }
+    toast.success("Email de verificação reenviado.");
   }
 
   async function entrarComGoogle() {
@@ -120,6 +138,30 @@ function AuthPage() {
         </header>
 
         <div className="-mt-6 rounded-t-3xl bg-background px-5 pt-6 pb-10">
+          {emailEnviado ? (
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
+                <Mail className="h-6 w-6 text-accent" />
+              </div>
+              <h2 className="text-xl">Confirme o seu email</h2>
+              <p className="text-sm text-muted-foreground">
+                Enviámos um link de verificação para <strong>{emailEnviado}</strong>. Abra o link para
+                concluir a criação da conta e depois volte para entrar.
+              </p>
+              <Button
+                variant="secondary"
+                className="h-12 w-full rounded-2xl"
+                disabled={busy}
+                onClick={reenviar}
+              >
+                {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Reenviar email de verificação
+              </Button>
+              <Button variant="ghost" className="w-full" onClick={() => setEmailEnviado(null)}>
+                Voltar
+              </Button>
+            </div>
+          ) : (
           <Tabs defaultValue="entrar">
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
               <TabsTrigger value="entrar">Entrar</TabsTrigger>
@@ -178,6 +220,7 @@ function AuthPage() {
               </Button>
             </div>
           </Tabs>
+          )}
         </div>
       </div>
     </div>
