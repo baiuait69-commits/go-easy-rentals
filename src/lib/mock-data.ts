@@ -160,3 +160,61 @@ export const receitaMensal = [
   { mes: "Jul", valor: 3120000 },
   { mes: "Ago", valor: 3540000 },
 ];
+
+export type Parceiro = {
+  id: string;
+  nome: string;
+  nif: string;
+  zona: string;
+  frota: number;
+  estado: "Pendente" | "Aprovado" | "Suspenso";
+  plano: "Básico" | "Pro" | "Premium";
+};
+
+export const parceiros: Parceiro[] = [
+  { id: "EMP-01", nome: "Kilamba Rent-a-Car", nif: "5417820394", zona: "Talatona", frota: 24, estado: "Aprovado", plano: "Pro" },
+  { id: "EMP-02", nome: "Angoauto Aluguer", nif: "5410093882", zona: "Maianga", frota: 12, estado: "Aprovado", plano: "Básico" },
+  { id: "EMP-03", nome: "Benguela Drive", nif: "5438871200", zona: "Benfica", frota: 8, estado: "Pendente", plano: "Básico" },
+  { id: "EMP-04", nome: "Luanda Prime Cars", nif: "5449920117", zona: "Ilha", frota: 31, estado: "Pendente", plano: "Premium" },
+  { id: "EMP-05", nome: "Cabinda Motors", nif: "5401778452", zona: "Cabinda", frota: 5, estado: "Suspenso", plano: "Básico" },
+];
+
+export type UtilizadorAdmin = {
+  id: string;
+  nome: string;
+  email: string;
+  tipo: "Cliente" | "Empresa";
+  verificado: boolean;
+  reservas: number;
+  activo: boolean;
+};
+
+export const utilizadores: UtilizadorAdmin[] = [
+  { id: "USR-1001", nome: "Nelson Cabral", email: "nelson@email.ao", tipo: "Cliente", verificado: true, reservas: 12, activo: true },
+  { id: "USR-1002", nome: "Ana Tchissola", email: "ana.t@email.ao", tipo: "Cliente", verificado: false, reservas: 3, activo: true },
+  { id: "USR-1003", nome: "Job Manuel", email: "job.m@email.ao", tipo: "Cliente", verificado: true, reservas: 7, activo: false },
+  { id: "USR-1004", nome: "Kilamba Rent-a-Car", email: "geral@kilambarac.ao", tipo: "Empresa", verificado: true, reservas: 64, activo: true },
+];
+
+export const pagamentosAdmin = [
+  { id: "PAG-8891", origem: "RSV-1042", metodo: "Multicaixa Express", valor: 285000, comissao: 34200, estado: "Liquidado" },
+  { id: "PAG-8887", origem: "RSV-1038", metodo: "Cartão Visa", valor: 84000, comissao: 10080, estado: "Pendente" },
+  { id: "PAG-8871", origem: "RSV-1015", metodo: "Multicaixa Express", valor: 56000, comissao: 6720, estado: "Liquidado" },
+  { id: "PAG-8860", origem: "RSV-1009", metodo: "Transferência", valor: 232000, comissao: 27840, estado: "Liquidado" },
+];
+
+export const ticketsSuporte = [
+  { id: "TK-341", assunto: "Viatura não entregue no local combinado", utilizador: "Ana Tchissola", prioridade: "Alta", estado: "Aberto" },
+  { id: "TK-338", assunto: "Reembolso de reserva cancelada", utilizador: "Job Manuel", prioridade: "Média", estado: "Em análise" },
+  { id: "TK-330", assunto: "Erro ao validar bilhete de identidade", utilizador: "Nelson Cabral", prioridade: "Baixa", estado: "Resolvido" },
+];
+
+export const utilizacaoSemanal = [
+  { dia: "Seg", reservas: 34 },
+  { dia: "Ter", reservas: 41 },
+  { dia: "Qua", reservas: 38 },
+  { dia: "Qui", reservas: 52 },
+  { dia: "Sex", reservas: 76 },
+  { dia: "Sáb", reservas: 88 },
+  { dia: "Dom", reservas: 61 },
+];
