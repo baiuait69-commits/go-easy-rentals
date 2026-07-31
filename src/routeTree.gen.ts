@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
@@ -18,6 +19,11 @@ import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmpresaRoute = EmpresaRouteImport.update({
@@ -43,6 +49,7 @@ const ViaturaIdRoute = ViaturaIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -65,14 +74,23 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
+  fullPaths:
+    '/' | '/auth' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
-  id: '__root__' | '/' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
+  to: '/' | '/auth' | '/empresa' | '/perfil' | '/reservas' | '/viatura/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/empresa'
+    | '/perfil'
+    | '/reservas'
+    | '/viatura/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
@@ -86,6 +104,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/empresa': {
@@ -121,6 +146,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
