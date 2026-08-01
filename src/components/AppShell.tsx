@@ -2,6 +2,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Car, CalendarClock, Building2, User, ShieldCheck, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { useRoles } from "@/hooks/useRoles";
+
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/", label: "Viaturas", icon: Car },
   { to: "/reservas", label: "Reservas", icon: CalendarClock },
@@ -12,6 +14,8 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { roles } = useRoles();
+  const visiveis = tabs.filter((t) => t.to !== "/admin" || roles.length > 0 || pathname === "/admin");
 
   return (
     <div className="min-h-screen bg-secondary/40 flex justify-center">
@@ -19,8 +23,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="pb-28">{children}</div>
 
         <nav className="fixed bottom-0 z-30 w-full max-w-[440px] border-t border-border bg-card/95 backdrop-blur">
-          <ul className="grid grid-cols-5">
-            {tabs.map((tab) => {
+          <ul className="grid" style={{ gridTemplateColumns: `repeat(${visiveis.length}, minmax(0, 1fr))` }}>
+            {visiveis.map((tab) => {
               const active = tab.to === "/" ? pathname === "/" : pathname.startsWith(tab.to);
               return (
                 <li key={tab.to}>
