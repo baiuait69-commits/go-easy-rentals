@@ -92,7 +92,7 @@ function Admin() {
         <Kpi rotulo="Pendentes" valor={`${pendentes.length}`} />
       </div>
 
-      <Tabs defaultValue={areas[0]} className="mt-5 px-5">
+      <Tabs defaultValue={areas[0]!} className="mt-5 px-5">
         <TabsList
           className="grid w-full rounded-2xl"
           style={{ gridTemplateColumns: `repeat(${areas.length}, minmax(0, 1fr))` }}
