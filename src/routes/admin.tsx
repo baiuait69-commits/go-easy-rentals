@@ -1,12 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Area, AreaChart, ResponsiveContainer, XAxis } from "recharts";
-import { Ban, Check, CircleDollarSign, Headphones, ShieldCheck, Users, X } from "lucide-react";
+import { Ban, Check, CircleDollarSign, Headphones, Lock, ShieldCheck, Users, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRoles } from "@/hooks/useRoles";
+import { areasPara, rotuloArea, rotuloFuncao } from "@/lib/permissions";
 import {
   kwanza,
   pagamentosAdmin,
@@ -35,9 +37,38 @@ export const Route = createFileRoute("/admin")({
 });
 
 function Admin() {
+  const { roles, loading } = useRoles();
   const pendentes = parceiros.filter((p) => p.estado === "Pendente");
   const comissaoTotal = pagamentosAdmin.reduce((acc, p) => acc + p.comissao, 0);
   const volume = pagamentosAdmin.reduce((acc, p) => acc + p.valor, 0);
+  const areas = areasPara(roles);
+  const isAdmin = roles.includes("admin");
+
+  if (loading) {
+    return (
+      <AppShell>
+        <div className="px-5 pt-16 text-sm text-muted-foreground">A verificar permissões…</div>
+      </AppShell>
+    );
+  }
+
+  if (areas.length === 0) {
+    return (
+      <AppShell>
+        <div className="px-5 pt-16 text-center">
+          <Lock className="mx-auto h-10 w-10 text-muted-foreground" />
+          <h1 className="mt-4 text-2xl">Acesso restrito</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Esta área é reservada a contas com função de gestor, empresa ou suporte. Peça a um gestor
+            para lhe atribuir uma função.
+          </p>
+          <Button asChild className="mt-6 h-12 w-full rounded-2xl">
+            <Link to="/auth">Entrar noutra conta</Link>
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
@@ -46,6 +77,13 @@ function Admin() {
           <ShieldCheck className="h-3.5 w-3.5 text-accent" /> Administração
         </p>
         <h1 className="text-2xl">Dashboard do gestor</h1>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {roles.map((r) => (
+            <Badge key={r} variant="secondary">
+              {rotuloFuncao[r]}
+            </Badge>
+          ))}
+        </div>
       </header>
 
       <div className="mt-4 grid grid-cols-3 gap-2 px-5">
@@ -54,22 +92,19 @@ function Admin() {
         <Kpi rotulo="Pendentes" valor={`${pendentes.length}`} />
       </div>
 
-      <Tabs defaultValue="estatisticas" className="mt-5 px-5">
-        <TabsList className="grid w-full grid-cols-4 rounded-2xl">
-          <TabsTrigger value="estatisticas" className="rounded-xl text-[11px]">
-            Stats
-          </TabsTrigger>
-          <TabsTrigger value="parceiros" className="rounded-xl text-[11px]">
-            Parceiros
-          </TabsTrigger>
-          <TabsTrigger value="utilizadores" className="rounded-xl text-[11px]">
-            Users
-          </TabsTrigger>
-          <TabsTrigger value="pagamentos" className="rounded-xl text-[11px]">
-            Pagam.
-          </TabsTrigger>
+      <Tabs defaultValue={areas[0]} className="mt-5 px-5">
+        <TabsList
+          className="grid w-full rounded-2xl"
+          style={{ gridTemplateColumns: `repeat(${areas.length}, minmax(0, 1fr))` }}
+        >
+          {areas.map((a) => (
+            <TabsTrigger key={a} value={a} className="rounded-xl text-[11px]">
+              {rotuloArea[a]}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
+        {areas.includes("estatisticas") && (
         <TabsContent value="estatisticas" className="mt-4 space-y-4">
           <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-sm">Reservas por dia (semana actual)</h2>
@@ -95,7 +130,11 @@ function Admin() {
             <Kpi rotulo="Taxa de conversão" valor="34%" />
             <Kpi rotulo="Avaliação média" valor="4.7" />
           </section>
+        </TabsContent>
+        )}
 
+        {areas.includes("suporte") && (
+        <TabsContent value="suporte" className="mt-4 space-y-4">
           <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="flex items-center gap-2 text-sm">
               <Headphones className="h-4 w-4 text-accent" /> Suporte ao cliente
@@ -118,7 +157,9 @@ function Admin() {
             </Button>
           </section>
         </TabsContent>
+        )}
 
+        {areas.includes("parceiros") && (
         <TabsContent value="parceiros" className="mt-4 space-y-3">
           {parceiros.map((p) => (
             <article key={p.id} className="rounded-2xl border border-border bg-card p-4">
@@ -132,7 +173,11 @@ function Admin() {
                 </div>
                 <Badge variant={p.estado === "Aprovado" ? "default" : "secondary"}>{p.estado}</Badge>
               </div>
-              {p.estado === "Pendente" ? (
+              {!isAdmin ? (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Apenas gestores podem aprovar ou suspender parceiros.
+                </p>
+              ) : p.estado === "Pendente" ? (
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <Button className="rounded-xl" onClick={() => toast.success(`${p.nome} aprovado`)}>
                     <Check className="mr-1 h-4 w-4" /> Aprovar
@@ -155,7 +200,9 @@ function Admin() {
             </article>
           ))}
         </TabsContent>
+        )}
 
+        {areas.includes("utilizadores") && (
         <TabsContent value="utilizadores" className="mt-4 space-y-3">
           {utilizadores.map((u) => (
             <article key={u.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-card p-4">
@@ -168,18 +215,24 @@ function Admin() {
                   {u.tipo} · {u.reservas} reservas · {u.verificado ? "verificado" : "por verificar"}
                 </p>
               </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="rounded-xl"
-                onClick={() => toast(u.activo ? `${u.nome} bloqueado` : `${u.nome} reactivado`)}
-              >
-                {u.activo ? "Bloquear" : "Reactivar"}
-              </Button>
+              {isAdmin ? (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="rounded-xl"
+                  onClick={() => toast(u.activo ? `${u.nome} bloqueado` : `${u.nome} reactivado`)}
+                >
+                  {u.activo ? "Bloquear" : "Reactivar"}
+                </Button>
+              ) : (
+                <Badge variant="secondary">{u.activo ? "Activo" : "Bloqueado"}</Badge>
+              )}
             </article>
           ))}
         </TabsContent>
+        )}
 
+        {areas.includes("pagamentos") && (
         <TabsContent value="pagamentos" className="mt-4 space-y-3">
           <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="flex items-center gap-2 text-sm">
@@ -207,6 +260,7 @@ function Admin() {
             </article>
           ))}
         </TabsContent>
+        )}
       </Tabs>
     </AppShell>
   );
