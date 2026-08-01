@@ -84,6 +84,13 @@ function Admin() {
             </Badge>
           ))}
         </div>
+        {isAdmin && (
+          <Button asChild variant="secondary" className="mt-3 w-full rounded-xl">
+            <Link to="/admin-funcoes">
+              <ShieldCheck className="mr-1 h-4 w-4" /> Gerir funções e permissões
+            </Link>
+          </Button>
+        )}
       </header>
 
       <div className="mt-4 grid grid-cols-3 gap-2 px-5">
