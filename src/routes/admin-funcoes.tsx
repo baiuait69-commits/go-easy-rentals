@@ -199,6 +199,6 @@ function Funcoes() {
           </article>
         ))}
       </section>
-    </AppShell>
+    </AdminShell>
   );
 }
