@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Lock, ShieldCheck } from "lucide-react";
+import { ArrowLeft, History, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useRoles } from "@/hooks/useRoles";
-import { definirFuncao, listarUtilizadoresComFuncoes } from "@/lib/roles.functions";
+import { definirFuncao, listarAuditoriaFuncoes, listarUtilizadoresComFuncoes } from "@/lib/roles.functions";
 import { permissoes, rotuloArea, rotuloFuncao, type AppRole } from "@/lib/permissions";
 
 const FUNCOES: AppRole[] = ["admin", "empresa", "suporte"];
@@ -38,6 +38,7 @@ function Funcoes() {
   const queryClient = useQueryClient();
   const listar = useServerFn(listarUtilizadoresComFuncoes);
   const definir = useServerFn(definirFuncao);
+  const listarAuditoria = useServerFn(listarAuditoriaFuncoes);
 
   const utilizadoresQuery = useQuery({
     queryKey: ["admin", "utilizadores-funcoes"],
@@ -45,10 +46,17 @@ function Funcoes() {
     enabled: isAdmin,
   });
 
+  const auditoriaQuery = useQuery({
+    queryKey: ["admin", "auditoria-funcoes"],
+    queryFn: () => listarAuditoria(),
+    enabled: isAdmin,
+  });
+
   const mutacao = useMutation({
     mutationFn: (vars: { userId: string; role: AppRole; activo: boolean }) => definir({ data: vars }),
     onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ["admin", "utilizadores-funcoes"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "auditoria-funcoes"] });
       toast.success(vars.activo ? `Função ${rotuloFuncao[vars.role]} atribuída` : `Função ${rotuloFuncao[vars.role]} removida`);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -145,6 +153,41 @@ function Funcoes() {
                 </label>
               ))}
             </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-8 space-y-3 px-5 pb-4">
+        <h2 className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
+          <History className="h-4 w-4" /> Registo de alterações
+        </h2>
+
+        {auditoriaQuery.isLoading && <p className="text-sm text-muted-foreground">A carregar registo…</p>}
+        {auditoriaQuery.isError && (
+          <p className="text-sm text-destructive">
+            Não foi possível carregar o registo: {(auditoriaQuery.error as Error).message}
+          </p>
+        )}
+        {auditoriaQuery.data?.length === 0 && (
+          <p className="text-sm text-muted-foreground">Ainda não há alterações registadas.</p>
+        )}
+
+        {(auditoriaQuery.data ?? []).map((r) => (
+          <article key={r.id} className="rounded-2xl border border-border bg-card p-4">
+            <div className="flex items-start justify-between gap-2">
+              <p className="min-w-0 text-sm">
+                <span className="truncate">{r.actor_email ?? "Gestor"}</span>{" "}
+                {r.action === "atribuida" ? "atribuiu" : "removeu"}{" "}
+                <strong>{rotuloFuncao[r.role as AppRole]}</strong>{" "}
+                {r.action === "atribuida" ? "a" : "de"} {r.target_email ?? "utilizador"}
+              </p>
+              <Badge variant={r.action === "atribuida" ? "default" : "secondary"}>
+                {r.action === "atribuida" ? "Atribuída" : "Removida"}
+              </Badge>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {new Date(r.created_at).toLocaleString("pt-PT")}
+            </p>
           </article>
         ))}
       </section>
