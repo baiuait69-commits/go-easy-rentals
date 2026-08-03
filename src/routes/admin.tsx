@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Area, AreaChart, ResponsiveContainer, XAxis } from "recharts";
 import { Ban, Check, CircleDollarSign, Headphones, Lock, ShieldCheck, Users, X } from "lucide-react";
 import { toast } from "sonner";
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoles } from "@/hooks/useRoles";
+import { useAuth } from "@/hooks/useAuth";
 import { areasPara, rotuloArea, rotuloFuncao } from "@/lib/permissions";
 import {
   kwanza,
