@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer, XAxis } from "recharts";
 import { Ban, Check, CircleDollarSign, Headphones, Lock, ShieldCheck, Users, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { AppShell } from "@/components/AppShell";
+import { AdminShell } from "@/components/AdminShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -38,23 +38,29 @@ export const Route = createFileRoute("/admin")({
 
 function Admin() {
   const { roles, loading } = useRoles();
+  const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
   const pendentes = parceiros.filter((p) => p.estado === "Pendente");
   const comissaoTotal = pagamentosAdmin.reduce((acc, p) => acc + p.comissao, 0);
   const volume = pagamentosAdmin.reduce((acc, p) => acc + p.valor, 0);
   const areas = areasPara(roles);
   const isAdmin = roles.includes("admin");
 
-  if (loading) {
+  useEffect(() => {
+    if (!authLoading && !session) navigate({ to: "/admin-login", replace: true });
+  }, [authLoading, session, navigate]);
+
+  if (loading || !session) {
     return (
-      <AppShell>
+      <AdminShell>
         <div className="px-5 pt-16 text-sm text-muted-foreground">A verificar permissões…</div>
-      </AppShell>
+      </AdminShell>
     );
   }
 
   if (areas.length === 0) {
     return (
-      <AppShell>
+      <AdminShell>
         <div className="px-5 pt-16 text-center">
           <Lock className="mx-auto h-10 w-10 text-muted-foreground" />
           <h1 className="mt-4 text-2xl">Acesso restrito</h1>
@@ -63,15 +69,15 @@ function Admin() {
             para lhe atribuir uma função.
           </p>
           <Button asChild className="mt-6 h-12 w-full rounded-2xl">
-            <Link to="/auth">Entrar noutra conta</Link>
+            <Link to="/admin-login">Entrar noutra conta</Link>
           </Button>
         </div>
-      </AppShell>
+      </AdminShell>
     );
   }
 
   return (
-    <AppShell>
+    <AdminShell>
       <header className="px-5 pt-8">
         <p className="flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
           <ShieldCheck className="h-3.5 w-3.5 text-accent" /> Administração
@@ -269,7 +275,7 @@ function Admin() {
         </TabsContent>
         )}
       </Tabs>
-    </AppShell>
+    </AdminShell>
   );
 }
 
