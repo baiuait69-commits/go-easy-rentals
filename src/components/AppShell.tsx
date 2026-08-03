@@ -1,21 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Car, CalendarClock, Building2, User, ShieldCheck, type LucideIcon } from "lucide-react";
+import { Car, CalendarClock, Building2, User, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-
-import { useRoles } from "@/hooks/useRoles";
 
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/", label: "Viaturas", icon: Car },
   { to: "/reservas", label: "Reservas", icon: CalendarClock },
   { to: "/empresa", label: "Empresa", icon: Building2 },
-  { to: "/admin", label: "Gestor", icon: ShieldCheck },
   { to: "/perfil", label: "Perfil", icon: User },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { roles } = useRoles();
-  const visiveis = tabs.filter((t) => t.to !== "/admin" || roles.length > 0 || pathname === "/admin");
+  const visiveis = tabs;
 
   return (
     <div className="min-h-screen bg-secondary/40 flex justify-center">

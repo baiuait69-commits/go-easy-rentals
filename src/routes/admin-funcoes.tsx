@@ -1,14 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, History, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
-import { AppShell } from "@/components/AppShell";
+import { AdminShell } from "@/components/AdminShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useRoles } from "@/hooks/useRoles";
+import { useAuth } from "@/hooks/useAuth";
 import { definirFuncao, listarAuditoriaFuncoes, listarUtilizadoresComFuncoes } from "@/lib/roles.functions";
 import { permissoes, rotuloArea, rotuloFuncao, type AppRole } from "@/lib/permissions";
 
@@ -34,6 +36,8 @@ export const Route = createFileRoute("/admin-funcoes")({
 
 function Funcoes() {
   const { roles, loading } = useRoles();
+  const { session, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = roles.includes("admin");
   const queryClient = useQueryClient();
   const listar = useServerFn(listarUtilizadoresComFuncoes);
@@ -62,17 +66,21 @@ function Funcoes() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (loading) {
+  useEffect(() => {
+    if (!authLoading && !session) navigate({ to: "/admin-login", replace: true });
+  }, [authLoading, session, navigate]);
+
+  if (loading || !session) {
     return (
-      <AppShell>
+      <AdminShell>
         <div className="px-5 pt-16 text-sm text-muted-foreground">A verificar permissões…</div>
-      </AppShell>
+      </AdminShell>
     );
   }
 
   if (!isAdmin) {
     return (
-      <AppShell>
+      <AdminShell>
         <div className="px-5 pt-16 text-center">
           <Lock className="mx-auto h-10 w-10 text-muted-foreground" />
           <h1 className="mt-4 text-2xl">Acesso restrito</h1>
@@ -83,12 +91,12 @@ function Funcoes() {
             <Link to="/admin">Voltar ao painel</Link>
           </Button>
         </div>
-      </AppShell>
+      </AdminShell>
     );
   }
 
   return (
-    <AppShell>
+    <AdminShell>
       <header className="px-5 pt-8">
         <Link to="/admin" className="flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
           <ArrowLeft className="h-3.5 w-3.5" /> Painel do gestor
@@ -191,6 +199,6 @@ function Funcoes() {
           </article>
         ))}
       </section>
-    </AppShell>
+    </AdminShell>
   );
 }
