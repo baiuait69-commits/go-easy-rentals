@@ -39,6 +39,19 @@ export const listarUtilizadoresComFuncoes = createServerFn({ method: "GET" })
     }));
   });
 
+export const listarAuditoriaFuncoes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await garantirAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("role_audit_log")
+      .select("id, actor_email, target_email, role, action, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
 export const definirFuncao = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
@@ -65,5 +78,17 @@ export const definirFuncao = createServerFn({ method: "POST" })
         .eq("role", data.role);
       if (error) throw new Error(error.message);
     }
+
+    const { data: alvo } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    const { data: actor } = await supabaseAdmin.auth.admin.getUserById(context.userId);
+    await supabaseAdmin.from("role_audit_log").insert({
+      actor_id: context.userId,
+      actor_email: actor?.user?.email ?? null,
+      target_user_id: data.userId,
+      target_email: alvo?.user?.email ?? null,
+      role: data.role,
+      action: data.activo ? "atribuida" : "removida",
+    });
+
     return { ok: true };
   });
