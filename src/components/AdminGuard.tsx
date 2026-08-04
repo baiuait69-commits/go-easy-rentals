@@ -13,7 +13,6 @@ type Props = {
   children: ReactNode;
   /** Função obrigatória para aceder à rota. Sem valor, basta ter qualquer função. */
   requerFuncao?: AppRole;
-  children_?: never;
 };
 
 export function AdminGuard({ children, requerFuncao }: Props) {
