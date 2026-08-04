@@ -1,15 +1,14 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Area, AreaChart, ResponsiveContainer, XAxis } from "recharts";
-import { Ban, Check, CircleDollarSign, Headphones, Lock, ShieldCheck, Users, X } from "lucide-react";
+import { Ban, Check, CircleDollarSign, Headphones, ShieldCheck, Users, X } from "lucide-react";
 import { toast } from "sonner";
 
+import { AdminGuard } from "@/components/AdminGuard";
 import { AdminShell } from "@/components/AdminShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoles } from "@/hooks/useRoles";
-import { useAuth } from "@/hooks/useAuth";
 import { areasPara, rotuloArea, rotuloFuncao } from "@/lib/permissions";
 import {
   kwanza,
@@ -35,48 +34,24 @@ export const Route = createFileRoute("/admin")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Admin,
+  component: AdminPage,
 });
 
+function AdminPage() {
+  return (
+    <AdminGuard>
+      <Admin />
+    </AdminGuard>
+  );
+}
+
 function Admin() {
-  const { roles, loading } = useRoles();
-  const navigate = useNavigate();
-  const { session, loading: authLoading } = useAuth();
+  const { roles } = useRoles();
   const pendentes = parceiros.filter((p) => p.estado === "Pendente");
   const comissaoTotal = pagamentosAdmin.reduce((acc, p) => acc + p.comissao, 0);
   const volume = pagamentosAdmin.reduce((acc, p) => acc + p.valor, 0);
   const areas = areasPara(roles);
   const isAdmin = roles.includes("admin");
-
-  useEffect(() => {
-    if (!authLoading && !session) navigate({ to: "/admin-login", replace: true });
-  }, [authLoading, session, navigate]);
-
-  if (loading || !session) {
-    return (
-      <AdminShell>
-        <div className="px-5 pt-16 text-sm text-muted-foreground">A verificar permissões…</div>
-      </AdminShell>
-    );
-  }
-
-  if (areas.length === 0) {
-    return (
-      <AdminShell>
-        <div className="px-5 pt-16 text-center">
-          <Lock className="mx-auto h-10 w-10 text-muted-foreground" />
-          <h1 className="mt-4 text-2xl">Acesso restrito</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Esta área é reservada a contas com função de gestor, empresa ou suporte. Peça a um gestor
-            para lhe atribuir uma função.
-          </p>
-          <Button asChild className="mt-6 h-12 w-full rounded-2xl">
-            <Link to="/admin-login">Entrar noutra conta</Link>
-          </Button>
-        </div>
-      </AdminShell>
-    );
-  }
 
   return (
     <AdminShell>
