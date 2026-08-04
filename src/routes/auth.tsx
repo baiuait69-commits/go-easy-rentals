@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth")({
@@ -38,7 +37,6 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [emailEnviado, setEmailEnviado] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/", replace: true });
@@ -75,10 +73,7 @@ function AuthPage() {
     const dados = validar();
     if (!dados) return;
     setBusy(true);
-    const { data, error } = await supabase.auth.signUp({
-      ...dados,
-      options: { emailRedirectTo: window.location.origin },
-    });
+    const { data, error } = await supabase.auth.signUp(dados);
     setBusy(false);
     if (error) {
       toast.error(
@@ -89,40 +84,16 @@ function AuthPage() {
       return;
     }
     if (data.session) {
+      toast.success("Conta criada. Já está a usar a Kubuka!");
       navigate({ to: "/", replace: true });
       return;
     }
-    setEmailEnviado(dados.email);
-    toast.success("Conta criada. Confirme o email para entrar.");
-  }
-
-  async function reenviar() {
-    if (!emailEnviado) return;
-    setBusy(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: emailEnviado,
-      options: { emailRedirectTo: window.location.origin },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("Não foi possível reenviar agora. Tente daqui a pouco.");
+    const { error: erroEntrada } = await supabase.auth.signInWithPassword(dados);
+    if (erroEntrada) {
+      toast.error("Conta criada. Entre com o seu email e palavra-passe.");
       return;
     }
-    toast.success("Email de verificação reenviado.");
-  }
-
-  async function entrarComGoogle() {
-    setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      setBusy(false);
-      toast.error("Não foi possível entrar com Google.");
-      return;
-    }
-    if (result.redirected) return;
+    toast.success("Conta criada. Já está a usar a Kubuka!");
     navigate({ to: "/", replace: true });
   }
 
@@ -138,30 +109,6 @@ function AuthPage() {
         </header>
 
         <div className="-mt-6 rounded-t-3xl bg-background px-5 pt-6 pb-10">
-          {emailEnviado ? (
-            <div className="space-y-4 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
-                <Mail className="h-6 w-6 text-accent" />
-              </div>
-              <h2 className="text-xl">Confirme o seu email</h2>
-              <p className="text-sm text-muted-foreground">
-                Enviámos um link de verificação para <strong>{emailEnviado}</strong>. Abra o link para
-                concluir a criação da conta e depois volte para entrar.
-              </p>
-              <Button
-                variant="secondary"
-                className="h-12 w-full rounded-2xl"
-                disabled={busy}
-                onClick={reenviar}
-              >
-                {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Reenviar email de verificação
-              </Button>
-              <Button variant="ghost" className="w-full" onClick={() => setEmailEnviado(null)}>
-                Voltar
-              </Button>
-            </div>
-          ) : (
           <Tabs defaultValue="entrar">
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
               <TabsTrigger value="entrar">Entrar</TabsTrigger>
@@ -204,23 +151,12 @@ function AuthPage() {
                   {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
                   Criar conta
                 </Button>
+                <p className="mt-2 text-center text-xs text-muted-foreground">
+                  Sem confirmação por email — a conta fica ativa de imediato.
+                </p>
               </TabsContent>
-
-              <div className="flex items-center gap-3 py-1 text-xs uppercase tracking-widest text-muted-foreground">
-                <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
-              </div>
-
-              <Button
-                variant="secondary"
-                className="h-12 w-full rounded-2xl"
-                disabled={busy}
-                onClick={entrarComGoogle}
-              >
-                Continuar com Google
-              </Button>
             </div>
           </Tabs>
-          )}
         </div>
       </div>
     </div>
