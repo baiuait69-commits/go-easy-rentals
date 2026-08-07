@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { MapPin, Search, Star, SlidersHorizontal, Gauge, Users } from "lucide-react";
+import { MapPin, Search, Star, SlidersHorizontal, Gauge, Users, Truck, Package } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { kwanza, viaturas, type Categoria } from "@/lib/mock-data";
+import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const categorias: (Categoria | "Todas")[] = ["Todas", "SUV", "Sedan", "Compacto", "Pick-up", "Luxo"];
+const categorias: (Categoria | "Todas")[] = ["Todas", "Carrinha", "SUV", "Sedan", "Compacto", "Pick-up", "Luxo"];
 
 function Index() {
   const [termo, setTermo] = useState("");
@@ -55,6 +56,13 @@ function Index() {
   return (
     <AppShell>
       <header className="bg-heat px-5 pt-8 pb-10 text-primary-foreground">
+        <img
+          src={logoAsset.url}
+          alt="Teu Carro — app de aluguer de carros"
+          width={1280}
+          height={699}
+          className="mb-4 h-14 w-auto rounded-xl bg-card object-contain px-2 py-1"
+        />
         <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-widest opacity-90">
           <MapPin className="h-3.5 w-3.5" /> Talatona, Luanda
         </p>
@@ -100,6 +108,22 @@ function Index() {
             </button>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setCategoria("Carrinha")}
+          className="mt-4 flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Truck className="h-5 w-5" />
+          </span>
+          <span>
+            <span className="block text-sm font-semibold">Aluguer de carrinha</span>
+            <span className="block text-xs text-muted-foreground">
+              Mudanças de casa e transporte de mercadoria, com motorista opcional.
+            </span>
+          </span>
+        </button>
 
         {filtrosAbertos && (
           <div className="mt-4 space-y-4 rounded-2xl border border-border bg-card p-4">
@@ -169,6 +193,7 @@ function Index() {
                   />
                   <div className="absolute left-3 top-3 flex gap-2">
                     {v.entregaGratis && <Badge className="bg-accent text-accent-foreground">Entrega grátis</Badge>}
+                    {v.paraMudancas && <Badge className="bg-primary text-primary-foreground">Mudanças</Badge>}
                     {!v.disponivel && <Badge variant="secondary">Indisponível hoje</Badge>}
                   </div>
                 </div>
@@ -197,6 +222,11 @@ function Index() {
                     <span className="flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" /> {v.lugares} lugares
                     </span>
+                    {v.cargaM3 && (
+                      <span className="flex items-center gap-1">
+                        <Package className="h-3.5 w-3.5" /> {v.cargaM3} m³ de carga
+                      </span>
+                    )}
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5" /> {v.distanciaKm} km
                     </span>
