@@ -1,4 +1,4 @@
-export type Categoria = "SUV" | "Sedan" | "Compacto" | "Pick-up" | "Luxo";
+export type Categoria = "SUV" | "Sedan" | "Compacto" | "Pick-up" | "Luxo" | "Carrinha";
 export type Transmissao = "Manual" | "Automática";
 
 export type Viatura = {
@@ -19,6 +19,8 @@ export type Viatura = {
   entregaGratis: boolean;
   comMotorista: boolean;
   disponivel: boolean;
+  cargaM3?: number;
+  paraMudancas?: boolean;
 };
 
 export const viaturas: Viatura[] = [
@@ -97,6 +99,48 @@ export const viaturas: Viatura[] = [
     entregaGratis: false,
     comMotorista: false,
     disponivel: false,
+  },
+  {
+    id: "hiace-carga-2021",
+    marca: "Toyota",
+    modelo: "Hiace Carga",
+    categoria: "Carrinha",
+    transmissao: "Manual",
+    precoDia: 52000,
+    precoHora: 7500,
+    lugares: 3,
+    combustivel: "Gasóleo",
+    imagem: "/images/van-1.jpg",
+    empresa: "Angoauto Aluguer",
+    zona: "Viana, Luanda",
+    distanciaKm: 6.9,
+    avaliacao: 4.6,
+    entregaGratis: true,
+    comMotorista: true,
+    disponivel: true,
+    cargaM3: 9,
+    paraMudancas: true,
+  },
+  {
+    id: "canter-mudancas-2020",
+    marca: "Mitsubishi",
+    modelo: "Canter Caixa Fechada",
+    categoria: "Carrinha",
+    transmissao: "Manual",
+    precoDia: 78000,
+    precoHora: 11000,
+    lugares: 3,
+    combustivel: "Gasóleo",
+    imagem: "/images/van-2.jpg",
+    empresa: "Kilamba Rent-a-Car",
+    zona: "Cacuaco, Luanda",
+    distanciaKm: 13.5,
+    avaliacao: 4.8,
+    entregaGratis: false,
+    comMotorista: true,
+    disponivel: true,
+    cargaM3: 20,
+    paraMudancas: true,
   },
 ];
 
