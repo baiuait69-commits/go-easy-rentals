@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { MapPin, Search, Star, SlidersHorizontal, Gauge, Users, Truck, Package } from "lucide-react";
+import { MapPin, Search, Star, SlidersHorizontal, Gauge, Users, Truck, ChevronRight } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,9 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const categorias: (Categoria | "Todas")[] = ["Todas", "Carrinha", "SUV", "Sedan", "Compacto", "Pick-up", "Luxo"];
+const categorias: (Categoria | "Todas")[] = ["Todas", "SUV", "Sedan", "Compacto", "Pick-up", "Luxo"];
+
+const carros = viaturas.filter((v) => v.categoria !== "Carrinha");
 
 function Index() {
   const [termo, setTermo] = useState("");
@@ -40,9 +42,9 @@ function Index() {
   const [precoMax, setPrecoMax] = useState(100000);
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
-  const marcas = useMemo(() => Array.from(new Set(viaturas.map((v) => v.marca))), []);
+  const marcas = useMemo(() => Array.from(new Set(carros.map((v) => v.marca))), []);
 
-  const resultados = viaturas.filter((v) => {
+  const resultados = carros.filter((v) => {
     const alvo = `${v.marca} ${v.modelo} ${v.zona}`.toLowerCase();
     return (
       alvo.includes(termo.toLowerCase()) &&
@@ -64,7 +66,7 @@ function Index() {
           className="mb-4 h-14 w-auto rounded-xl bg-card object-contain px-2 py-1"
         />
         <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-widest opacity-90">
-          <MapPin className="h-3.5 w-3.5" /> Talatona, Luanda
+          <MapPin className="h-3.5 w-3.5" /> Aluguer diário · Talatona, Luanda
         </p>
         <h1 className="mt-2 text-3xl leading-tight">
           A viatura certa,
@@ -109,21 +111,21 @@ function Index() {
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setCategoria("Carrinha")}
+        <Link
+          to="/mudancas"
           className="mt-4 flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left"
         >
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Truck className="h-5 w-5" />
           </span>
-          <span>
+          <span className="flex-1">
             <span className="block text-sm font-semibold">Aluguer de carrinha</span>
             <span className="block text-xs text-muted-foreground">
               Mudanças de casa e transporte de mercadoria, com motorista opcional.
             </span>
           </span>
-        </button>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        </Link>
 
         {filtrosAbertos && (
           <div className="mt-4 space-y-4 rounded-2xl border border-border bg-card p-4">
@@ -193,7 +195,6 @@ function Index() {
                   />
                   <div className="absolute left-3 top-3 flex gap-2">
                     {v.entregaGratis && <Badge className="bg-accent text-accent-foreground">Entrega grátis</Badge>}
-                    {v.paraMudancas && <Badge className="bg-primary text-primary-foreground">Mudanças</Badge>}
                     {!v.disponivel && <Badge variant="secondary">Indisponível hoje</Badge>}
                   </div>
                 </div>
@@ -222,11 +223,6 @@ function Index() {
                     <span className="flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" /> {v.lugares} lugares
                     </span>
-                    {v.cargaM3 && (
-                      <span className="flex items-center gap-1">
-                        <Package className="h-3.5 w-3.5" /> {v.cargaM3} m³ de carga
-                      </span>
-                    )}
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5" /> {v.distanciaKm} km
                     </span>
