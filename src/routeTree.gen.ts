@@ -15,6 +15,7 @@ import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
@@ -49,6 +50,11 @@ const EmpresaRoute = EmpresaRouteImport.update({
   path: '/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MudancasRoute = MudancasRouteImport.update({
+  id: '/mudancas',
+  path: '/mudancas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/viatura/$id'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/viatura/$id'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/viatura/$id'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
+  MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mudancas': {
+      id: '/mudancas'
+      path: '/mudancas'
+      fullPath: '/mudancas'
+      preLoaderRoute: typeof MudancasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/perfil': {
       id: '/perfil'
       path: '/perfil'
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
+  MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
   ViaturaIdRoute: ViaturaIdRoute,
