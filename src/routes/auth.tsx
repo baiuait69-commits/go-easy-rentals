@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -99,11 +100,15 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen bg-secondary/40 flex justify-center">
-      <div className="w-full max-w-[440px] min-h-screen bg-background shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)]">
+      <div className="w-full max-w-[440px] min-h-screen bg-background shadow-[0_0_60px_-25px_rgba(30,64,140,0.45)]">
         <header className="bg-heat px-5 pt-10 pb-12 text-primary-foreground">
-          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest opacity-90">
-            <Car className="h-4 w-4" /> Kubuka
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="Teu Carro — app de aluguer de carros"
+            width={1280}
+            height={699}
+            className="h-14 w-auto rounded-xl bg-card object-contain px-2 py-1"
+          />
           <h1 className="mt-3 text-3xl">Entrar ou criar conta</h1>
           <p className="mt-1 text-sm opacity-90">Reserve viaturas em Luanda em segundos.</p>
         </header>
