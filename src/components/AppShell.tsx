@@ -1,9 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Car, CalendarClock, Building2, User, type LucideIcon } from "lucide-react";
+import { Car, CalendarClock, Building2, User, Truck, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/", label: "Viaturas", icon: Car },
+  { to: "/mudancas", label: "Mudanças", icon: Truck },
   { to: "/reservas", label: "Reservas", icon: CalendarClock },
   { to: "/empresa", label: "Empresa", icon: Building2 },
   { to: "/perfil", label: "Perfil", icon: User },
