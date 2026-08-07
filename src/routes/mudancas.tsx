@@ -158,12 +158,3 @@ function Mudancas() {
     </AppShell>
   );
 }
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/mudancas')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <div>Hello "/mudancas"!</div>
-}
