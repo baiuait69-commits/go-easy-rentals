@@ -23,7 +23,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-secondary/40 flex justify-center">
-      <div className="w-full max-w-[440px] min-h-screen bg-background relative shadow-[0_0_60px_-25px_rgba(30,64,140,0.45)]">
+      <div className="w-full max-w-[440px] min-h-screen bg-background relative shadow-[0_0_80px_-20px_rgba(0,0,0,0.8)]">
         <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/95 px-5 py-3 backdrop-blur">
           <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-accent" /> Kubuka Gestão

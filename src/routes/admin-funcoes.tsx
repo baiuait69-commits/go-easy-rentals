@@ -1,15 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, History, ShieldCheck } from "lucide-react";
+import { ArrowLeft, History, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
-import { AdminGuard } from "@/components/AdminGuard";
 import { AdminShell } from "@/components/AdminShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useRoles } from "@/hooks/useRoles";
+import { useAuth } from "@/hooks/useAuth";
 import { definirFuncao, listarAuditoriaFuncoes, listarUtilizadoresComFuncoes } from "@/lib/roles.functions";
 import { permissoes, rotuloArea, rotuloFuncao, type AppRole } from "@/lib/permissions";
 
@@ -30,19 +31,13 @@ export const Route = createFileRoute("/admin-funcoes")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: FuncoesPage,
+  component: Funcoes,
 });
 
-function FuncoesPage() {
-  return (
-    <AdminGuard requerFuncao="admin">
-      <Funcoes />
-    </AdminGuard>
-  );
-}
-
 function Funcoes() {
-  const { roles } = useRoles();
+  const { roles, loading } = useRoles();
+  const { session, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = roles.includes("admin");
   const queryClient = useQueryClient();
   const listar = useServerFn(listarUtilizadoresComFuncoes);
@@ -70,6 +65,35 @@ function Funcoes() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  useEffect(() => {
+    if (!authLoading && !session) navigate({ to: "/admin-login", replace: true });
+  }, [authLoading, session, navigate]);
+
+  if (loading || !session) {
+    return (
+      <AdminShell>
+        <div className="px-5 pt-16 text-sm text-muted-foreground">A verificar permissões…</div>
+      </AdminShell>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <AdminShell>
+        <div className="px-5 pt-16 text-center">
+          <Lock className="mx-auto h-10 w-10 text-muted-foreground" />
+          <h1 className="mt-4 text-2xl">Acesso restrito</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Apenas contas com função de gestor podem atribuir funções e permissões.
+          </p>
+          <Button asChild variant="secondary" className="mt-6 h-12 w-full rounded-2xl">
+            <Link to="/admin">Voltar ao painel</Link>
+          </Button>
+        </div>
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell>
