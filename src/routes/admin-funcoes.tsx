@@ -100,8 +100,63 @@ function Funcoes() {
         ))}
       </section>
 
+      <section className="mt-6 px-5">
+        <article className="rounded-2xl border border-border bg-card p-4">
+          <h2 className="flex items-center gap-2 text-sm">
+            <UserPlus className="h-4 w-4 text-accent" /> Criar conta de painel
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            A conta é criada já activa, com as funções escolhidas.
+          </p>
+          <div className="mt-3 space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="novo-email">Email</Label>
+              <Input
+                id="novo-email"
+                type="email"
+                value={novoEmail}
+                onChange={(e) => setNovoEmail(e.target.value)}
+                placeholder="gestor@exemplo.com"
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="nova-pass">Palavra-passe</Label>
+              <Input
+                id="nova-pass"
+                type="text"
+                value={novaPass}
+                onChange={(e) => setNovaPass(e.target.value)}
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              {FUNCOES.map((f) => (
+                <label key={f} className="flex items-center justify-between gap-3 text-sm">
+                  <span>{rotuloFuncao[f]}</span>
+                  <Switch
+                    checked={novasFuncoes.includes(f)}
+                    onCheckedChange={(v) =>
+                      setNovasFuncoes((prev) => (v ? [...prev, f] : prev.filter((x) => x !== f)))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+            <Button
+              className="h-11 w-full rounded-xl"
+              disabled={criacao.isPending}
+              onClick={() => criacao.mutate()}
+            >
+              Criar conta
+            </Button>
+          </div>
+        </article>
+      </section>
+
       <section className="mt-6 space-y-3 px-5">
         <h2 className="text-sm uppercase tracking-widest text-muted-foreground">Utilizadores</h2>
+
 
         {utilizadoresQuery.isLoading && <p className="text-sm text-muted-foreground">A carregar utilizadores…</p>}
         {utilizadoresQuery.isError && (
