@@ -92,3 +92,97 @@ export const definirFuncao = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+const EMAIL_GESTOR_INICIAL = "nichoolson668@gmail.com";
+
+/** Cria a conta de gestor inicial. Só permitido para o email de arranque e só se ainda não existir. */
+export const criarContaGestorInicial = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        email: z.string().trim().toLowerCase().email().max(255),
+        password: z.string().min(6).max(72),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => {
+    if (data.email !== EMAIL_GESTOR_INICIAL) {
+      throw new Error("Este email não está autorizado a criar a conta de gestor inicial.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: lista, error: erroLista } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    if (erroLista) throw new Error(erroLista.message);
+    if (lista.users.some((u) => (u.email ?? "").toLowerCase() === data.email)) {
+      throw new Error("Esta conta de gestor já existe. Use o formulário de entrada.");
+    }
+
+    const { data: criado, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+
+    const { error: erroFuncao } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: criado.user.id, role: "admin" }, { onConflict: "user_id,role" });
+    if (erroFuncao) throw new Error(erroFuncao.message);
+
+    await supabaseAdmin.from("role_audit_log").insert({
+      actor_id: criado.user.id,
+      actor_email: data.email,
+      target_user_id: criado.user.id,
+      target_email: data.email,
+      role: "admin",
+      action: "atribuida",
+    });
+
+    return { ok: true };
+  });
+
+/** Um gestor cria uma nova conta de painel já com funções atribuídas. */
+export const criarContaComFuncoes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        email: z.string().trim().toLowerCase().email().max(255),
+        password: z.string().min(6).max(72),
+        funcoes: z.array(funcaoSchema).min(1),
+      })
+      .parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    await garantirAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: criado, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+
+    const { error: erroFuncoes } = await supabaseAdmin
+      .from("user_roles")
+      .upsert(
+        data.funcoes.map((role) => ({ user_id: criado.user.id, role })),
+        { onConflict: "user_id,role" },
+      );
+    if (erroFuncoes) throw new Error(erroFuncoes.message);
+
+    const { data: actor } = await supabaseAdmin.auth.admin.getUserById(context.userId);
+    await supabaseAdmin.from("role_audit_log").insert(
+      data.funcoes.map((role) => ({
+        actor_id: context.userId,
+        actor_email: actor?.user?.email ?? null,
+        target_user_id: criado.user.id,
+        target_email: data.email,
+        role,
+        action: "atribuida",
+      })),
+    );
+
+    return { ok: true };
+  });
