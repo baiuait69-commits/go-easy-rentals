@@ -259,15 +259,17 @@ function Detalhe() {
           </div>
           <Button
             className="mt-4 h-12 w-full rounded-2xl text-base"
-            disabled={!viatura.disponivel}
+            disabled={!viatura.disponivel || cargaExcede}
             onClick={() => {
               toast.success("Reserva enviada à empresa", {
-                description: "Vai receber a confirmação em tempo real.",
+                description: isCarrinha
+                  ? `${tipoCarga === "mudanca" ? "Mudança de casa" : "Mercadoria"} · ${cargaM3} m³${motorista ? " · com motorista" : ""}. Confirmação em tempo real.`
+                  : "Vai receber a confirmação em tempo real.",
               });
               navigate({ to: "/reservas" });
             }}
           >
-            {viatura.disponivel ? "Reservar agora" : "Indisponível hoje"}
+            {!viatura.disponivel ? "Indisponível hoje" : cargaExcede ? "Volume excede a capacidade" : "Reservar agora"}
           </Button>
         </div>
       </div>
