@@ -1,17 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, History, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, History, ShieldCheck, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminGuard } from "@/components/AdminGuard";
 import { AdminShell } from "@/components/AdminShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useRoles } from "@/hooks/useRoles";
-import { definirFuncao, listarAuditoriaFuncoes, listarUtilizadoresComFuncoes } from "@/lib/roles.functions";
+import {
+  criarContaComFuncoes,
+  definirFuncao,
+  listarAuditoriaFuncoes,
+  listarUtilizadoresComFuncoes,
+} from "@/lib/roles.functions";
 import { permissoes, rotuloArea, rotuloFuncao, type AppRole } from "@/lib/permissions";
+
 
 const FUNCOES: AppRole[] = ["admin", "empresa", "suporte"];
 
