@@ -48,11 +48,24 @@ function Detalhe() {
   const [entrega, setEntrega] = useState(true);
   const [seguro, setSeguro] = useState(true);
 
+  const isCarrinha = viatura.categoria === "Carrinha";
+  const [cargaM3, setCargaM3] = useState(1);
+  const [tipoCarga, setTipoCarga] = useState<"mudanca" | "mercadoria">("mudanca");
+  const [ajudantes, setAjudantes] = useState(false);
+
+  const capacidade = viatura.cargaM3 ?? 0;
+  const cargaExcede = isCarrinha && cargaM3 > capacidade;
+
   const base =
     periodo === "hora"
       ? viatura.precoHora
       : viatura.precoDia * (periodos.find((p) => p.chave === periodo)?.mult ?? 1);
-  const total = base + (motorista ? 25000 : 0) + (entrega && !viatura.entregaGratis ? 8000 : 0) + (seguro ? 12000 : 0);
+  const total =
+    base +
+    (motorista ? 25000 : 0) +
+    (entrega && !viatura.entregaGratis ? 8000 : 0) +
+    (seguro ? 12000 : 0) +
+    (isCarrinha && ajudantes ? 10000 : 0);
 
   return (
     <AppShell>
