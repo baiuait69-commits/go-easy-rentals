@@ -57,6 +57,25 @@ function Funcoes() {
   const listar = useServerFn(listarUtilizadoresComFuncoes);
   const definir = useServerFn(definirFuncao);
   const listarAuditoria = useServerFn(listarAuditoriaFuncoes);
+  const criarConta = useServerFn(criarContaComFuncoes);
+  const [novoEmail, setNovoEmail] = useState("");
+  const [novaPass, setNovaPass] = useState("");
+  const [novasFuncoes, setNovasFuncoes] = useState<AppRole[]>(["admin"]);
+
+  const criacao = useMutation({
+    mutationFn: () =>
+      criarConta({ data: { email: novoEmail.trim(), password: novaPass, funcoes: novasFuncoes } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "utilizadores-funcoes"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "auditoria-funcoes"] });
+      toast.success("Conta criada com sucesso");
+      setNovoEmail("");
+      setNovaPass("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+
 
   const utilizadoresQuery = useQuery({
     queryKey: ["admin", "utilizadores-funcoes"],
