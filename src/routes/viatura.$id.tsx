@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, MapPin, Navigation, Shield, Star, UserRound, Wrench } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Package, Shield, Star, Truck, UserRound, Users, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { kwanza, viaturas } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/viatura/$id")({
@@ -47,11 +48,24 @@ function Detalhe() {
   const [entrega, setEntrega] = useState(true);
   const [seguro, setSeguro] = useState(true);
 
+  const isCarrinha = viatura.categoria === "Carrinha";
+  const [cargaM3, setCargaM3] = useState(1);
+  const [tipoCarga, setTipoCarga] = useState<"mudanca" | "mercadoria">("mudanca");
+  const [ajudantes, setAjudantes] = useState(false);
+
+  const capacidade = viatura.cargaM3 ?? 0;
+  const cargaExcede = isCarrinha && cargaM3 > capacidade;
+
   const base =
     periodo === "hora"
       ? viatura.precoHora
       : viatura.precoDia * (periodos.find((p) => p.chave === periodo)?.mult ?? 1);
-  const total = base + (motorista ? 25000 : 0) + (entrega && !viatura.entregaGratis ? 8000 : 0) + (seguro ? 12000 : 0);
+  const total =
+    base +
+    (motorista ? 25000 : 0) +
+    (entrega && !viatura.entregaGratis ? 8000 : 0) +
+    (seguro ? 12000 : 0) +
+    (isCarrinha && ajudantes ? 10000 : 0);
 
   return (
     <AppShell>
@@ -120,16 +134,100 @@ function Detalhe() {
           ))}
         </div>
 
+        {isCarrinha && (
+          <>
+            <h2 className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">
+              Detalhes da mudança / carga
+            </h2>
+            <div className="mt-2 space-y-4 rounded-2xl border border-border bg-card p-4">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setTipoCarga("mudanca")}
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                    tipoCarga === "mudanca" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  <Package className="h-4 w-4" /> Mudança de casa
+                </button>
+                <button
+                  onClick={() => setTipoCarga("mercadoria")}
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                    tipoCarga === "mercadoria" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  <Truck className="h-4 w-4" /> Mercadoria
+                </button>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Volume de carga</span>
+                  <span className={`font-semibold ${cargaExcede ? "text-destructive" : "text-primary"}`}>
+                    {cargaM3} m³ <span className="font-normal text-muted-foreground">/ capacidade {capacidade} m³</span>
+                  </span>
+                </div>
+                <Slider
+                  className="mt-3"
+                  min={1}
+                  max={Math.max(capacidade + 5, 25)}
+                  step={1}
+                  value={[cargaM3]}
+                  onValueChange={([v]) => setCargaM3(v ?? 1)}
+                />
+                {cargaExcede ? (
+                  <p className="mt-2 text-xs font-medium text-destructive">
+                    O volume excede a capacidade desta carrinha. Escolha uma carrinha maior ou reduza o volume.
+                  </p>
+                ) : (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Capacidade disponível: {capacidade - cargaM3} m³ restantes.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <UserRound className="h-4 w-4 text-accent" />
+                  <span className="text-sm">
+                    Motorista
+                    <span className="block text-xs text-muted-foreground">
+                      {viatura.comMotorista ? "+ 25 000 Kz" : "Não disponível nesta carrinha"}
+                    </span>
+                  </span>
+                </div>
+                <Switch
+                  checked={motorista && viatura.comMotorista}
+                  onCheckedChange={setMotorista}
+                  disabled={!viatura.comMotorista}
+                />
+              </div>
+
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <Users className="h-4 w-4 text-accent" />
+                  <span className="text-sm">
+                    Ajudantes de carga
+                    <span className="block text-xs text-muted-foreground">+ 10 000 Kz</span>
+                  </span>
+                </div>
+                <Switch checked={ajudantes} onCheckedChange={setAjudantes} />
+              </div>
+            </div>
+          </>
+        )}
+
         <h2 className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">Serviços adicionais</h2>
         <ul className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card">
-          <Extra
-            icon={<UserRound className="h-4 w-4 text-accent" />}
-            titulo="Motorista"
-            sub="+ 25 000 Kz"
-            checked={motorista}
-            onChange={setMotorista}
-            disabled={!viatura.comMotorista}
-          />
+          {!isCarrinha && (
+            <Extra
+              icon={<UserRound className="h-4 w-4 text-accent" />}
+              titulo="Motorista"
+              sub="+ 25 000 Kz"
+              checked={motorista}
+              onChange={setMotorista}
+              disabled={!viatura.comMotorista}
+            />
+          )}
           <Extra
             icon={<Navigation className="h-4 w-4 text-accent" />}
             titulo="Entrega onde estiver"
@@ -161,15 +259,17 @@ function Detalhe() {
           </div>
           <Button
             className="mt-4 h-12 w-full rounded-2xl text-base"
-            disabled={!viatura.disponivel}
+            disabled={!viatura.disponivel || cargaExcede}
             onClick={() => {
               toast.success("Reserva enviada à empresa", {
-                description: "Vai receber a confirmação em tempo real.",
+                description: isCarrinha
+                  ? `${tipoCarga === "mudanca" ? "Mudança de casa" : "Mercadoria"} · ${cargaM3} m³${motorista ? " · com motorista" : ""}. Confirmação em tempo real.`
+                  : "Vai receber a confirmação em tempo real.",
               });
               navigate({ to: "/reservas" });
             }}
           >
-            {viatura.disponivel ? "Reservar agora" : "Indisponível hoje"}
+            {!viatura.disponivel ? "Indisponível hoje" : cargaExcede ? "Volume excede a capacidade" : "Reservar agora"}
           </Button>
         </div>
       </div>
