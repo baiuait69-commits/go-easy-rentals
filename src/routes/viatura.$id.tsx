@@ -134,16 +134,100 @@ function Detalhe() {
           ))}
         </div>
 
+        {isCarrinha && (
+          <>
+            <h2 className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">
+              Detalhes da mudança / carga
+            </h2>
+            <div className="mt-2 space-y-4 rounded-2xl border border-border bg-card p-4">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setTipoCarga("mudanca")}
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                    tipoCarga === "mudanca" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  <Package className="h-4 w-4" /> Mudança de casa
+                </button>
+                <button
+                  onClick={() => setTipoCarga("mercadoria")}
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                    tipoCarga === "mercadoria" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  <Truck className="h-4 w-4" /> Mercadoria
+                </button>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Volume de carga</span>
+                  <span className={`font-semibold ${cargaExcede ? "text-destructive" : "text-primary"}`}>
+                    {cargaM3} m³ <span className="font-normal text-muted-foreground">/ capacidade {capacidade} m³</span>
+                  </span>
+                </div>
+                <Slider
+                  className="mt-3"
+                  min={1}
+                  max={Math.max(capacidade + 5, 25)}
+                  step={1}
+                  value={[cargaM3]}
+                  onValueChange={([v]) => setCargaM3(v ?? 1)}
+                />
+                {cargaExcede ? (
+                  <p className="mt-2 text-xs font-medium text-destructive">
+                    O volume excede a capacidade desta carrinha. Escolha uma carrinha maior ou reduza o volume.
+                  </p>
+                ) : (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Capacidade disponível: {capacidade - cargaM3} m³ restantes.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <UserRound className="h-4 w-4 text-accent" />
+                  <span className="text-sm">
+                    Motorista
+                    <span className="block text-xs text-muted-foreground">
+                      {viatura.comMotorista ? "+ 25 000 Kz" : "Não disponível nesta carrinha"}
+                    </span>
+                  </span>
+                </div>
+                <Switch
+                  checked={motorista && viatura.comMotorista}
+                  onCheckedChange={setMotorista}
+                  disabled={!viatura.comMotorista}
+                />
+              </div>
+
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <Users className="h-4 w-4 text-accent" />
+                  <span className="text-sm">
+                    Ajudantes de carga
+                    <span className="block text-xs text-muted-foreground">+ 10 000 Kz</span>
+                  </span>
+                </div>
+                <Switch checked={ajudantes} onCheckedChange={setAjudantes} />
+              </div>
+            </div>
+          </>
+        )}
+
         <h2 className="mt-6 text-sm uppercase tracking-widest text-muted-foreground">Serviços adicionais</h2>
         <ul className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card">
-          <Extra
-            icon={<UserRound className="h-4 w-4 text-accent" />}
-            titulo="Motorista"
-            sub="+ 25 000 Kz"
-            checked={motorista}
-            onChange={setMotorista}
-            disabled={!viatura.comMotorista}
-          />
+          {!isCarrinha && (
+            <Extra
+              icon={<UserRound className="h-4 w-4 text-accent" />}
+              titulo="Motorista"
+              sub="+ 25 000 Kz"
+              checked={motorista}
+              onChange={setMotorista}
+              disabled={!viatura.comMotorista}
+            />
+          )}
           <Extra
             icon={<Navigation className="h-4 w-4 text-accent" />}
             titulo="Entrega onde estiver"
