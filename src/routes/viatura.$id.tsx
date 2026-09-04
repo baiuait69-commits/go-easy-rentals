@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, MapPin, Navigation, Shield, Star, UserRound, Wrench } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Package, Shield, Star, Truck, UserRound, Users, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { kwanza, viaturas } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/viatura/$id")({
