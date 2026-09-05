@@ -101,7 +101,7 @@ function AuthPage() {
   return (
     <div className="min-h-screen bg-secondary/40 flex justify-center">
       <div className="w-full max-w-[440px] min-h-screen bg-background shadow-[0_0_60px_-25px_rgba(212,175,55,0.35)]">
-        <header className="bg-heat px-5 pt-10 pb-12 text-primary-foreground">
+        <header className="bg-heat px-5 pt-10 pb-12 text-foreground">
           <img
             src={logoAsset.url}
             alt="Teu Carro — app de aluguer de carros"

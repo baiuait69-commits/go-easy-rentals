@@ -43,7 +43,7 @@ function Mudancas() {
 
   return (
     <AppShell>
-      <header className="bg-heat px-5 pt-8 pb-10 text-primary-foreground">
+      <header className="bg-heat px-5 pt-8 pb-10 text-foreground">
         <img
           src={logoAsset.url}
           alt="Teu Carro — app de aluguer de carros"
