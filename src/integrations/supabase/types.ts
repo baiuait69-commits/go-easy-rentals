@@ -14,6 +14,161 @@ export type Database = {
   }
   public: {
     Tables: {
+      anuncio_fotos: {
+        Row: {
+          anuncio_id: string
+          created_at: string
+          id: string
+          ordem: number
+          url: string
+        }
+        Insert: {
+          anuncio_id: string
+          created_at?: string
+          id?: string
+          ordem?: number
+          url: string
+        }
+        Update: {
+          anuncio_id?: string
+          created_at?: string
+          id?: string
+          ordem?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anuncio_fotos_anuncio_id_fkey"
+            columns: ["anuncio_id"]
+            isOneToOne: false
+            referencedRelation: "anuncios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anuncios: {
+        Row: {
+          ano: number | null
+          carga_m3: number | null
+          categoria: Database["public"]["Enums"]["anuncio_categoria"]
+          caucao: number
+          com_motorista: boolean
+          combustivel: string | null
+          created_at: string
+          descricao: string | null
+          destaque: boolean
+          disponivel: boolean
+          entrega: boolean
+          estado: Database["public"]["Enums"]["anuncio_estado"]
+          id: string
+          imagem: string | null
+          lugares: number | null
+          marca: string | null
+          modelo: string | null
+          municipio: string
+          owner_id: string
+          preco_dia: number
+          preco_hora: number | null
+          preco_mes: number | null
+          preco_semana: number | null
+          subcategoria: string
+          titulo: string
+          transmissao: string | null
+          updated_at: string
+        }
+        Insert: {
+          ano?: number | null
+          carga_m3?: number | null
+          categoria: Database["public"]["Enums"]["anuncio_categoria"]
+          caucao?: number
+          com_motorista?: boolean
+          combustivel?: string | null
+          created_at?: string
+          descricao?: string | null
+          destaque?: boolean
+          disponivel?: boolean
+          entrega?: boolean
+          estado?: Database["public"]["Enums"]["anuncio_estado"]
+          id?: string
+          imagem?: string | null
+          lugares?: number | null
+          marca?: string | null
+          modelo?: string | null
+          municipio: string
+          owner_id: string
+          preco_dia: number
+          preco_hora?: number | null
+          preco_mes?: number | null
+          preco_semana?: number | null
+          subcategoria: string
+          titulo: string
+          transmissao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ano?: number | null
+          carga_m3?: number | null
+          categoria?: Database["public"]["Enums"]["anuncio_categoria"]
+          caucao?: number
+          com_motorista?: boolean
+          combustivel?: string | null
+          created_at?: string
+          descricao?: string | null
+          destaque?: boolean
+          disponivel?: boolean
+          entrega?: boolean
+          estado?: Database["public"]["Enums"]["anuncio_estado"]
+          id?: string
+          imagem?: string | null
+          lugares?: number | null
+          marca?: string | null
+          modelo?: string | null
+          municipio?: string
+          owner_id?: string
+          preco_dia?: number
+          preco_hora?: number | null
+          preco_mes?: number | null
+          preco_semana?: number | null
+          subcategoria?: string
+          titulo?: string
+          transmissao?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      perfis: {
+        Row: {
+          created_at: string
+          id: string
+          municipio: string | null
+          nome: string | null
+          telefone: string | null
+          tipo_conta: Database["public"]["Enums"]["tipo_conta"]
+          updated_at: string
+          verificado: boolean
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          municipio?: string | null
+          nome?: string | null
+          telefone?: string | null
+          tipo_conta?: Database["public"]["Enums"]["tipo_conta"]
+          updated_at?: string
+          verificado?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          municipio?: string | null
+          nome?: string | null
+          telefone?: string | null
+          tipo_conta?: Database["public"]["Enums"]["tipo_conta"]
+          updated_at?: string
+          verificado?: boolean
+        }
+        Relationships: []
+      }
       role_audit_log: {
         Row: {
           action: string
@@ -82,7 +237,20 @@ export type Database = {
       }
     }
     Enums: {
+      anuncio_categoria:
+        | "veiculos"
+        | "transporte"
+        | "pesados"
+        | "maquinas"
+        | "servicos"
+      anuncio_estado:
+        | "rascunho"
+        | "pendente"
+        | "aprovado"
+        | "rejeitado"
+        | "bloqueado"
       app_role: "admin" | "empresa" | "suporte"
+      tipo_conta: "cliente" | "proprietario" | "empresa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -210,7 +378,22 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      anuncio_categoria: [
+        "veiculos",
+        "transporte",
+        "pesados",
+        "maquinas",
+        "servicos",
+      ],
+      anuncio_estado: [
+        "rascunho",
+        "pendente",
+        "aprovado",
+        "rejeitado",
+        "bloqueado",
+      ],
       app_role: ["admin", "empresa", "suporte"],
+      tipo_conta: ["cliente", "proprietario", "empresa"],
     },
   },
 } as const
