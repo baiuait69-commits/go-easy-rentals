@@ -45,7 +45,7 @@ function Perfil() {
 
   return (
     <AppShell>
-      <header className="bg-heat px-5 pt-8 pb-12 text-primary-foreground">
+      <header className="bg-heat px-5 pt-8 pb-12 text-foreground">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-card font-display text-2xl text-accent">
             {(user?.email?.[0] ?? "N").toUpperCase()}
