@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as MeusAnunciosRouteImport } from './routes/meus-anuncios'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
@@ -30,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnunciosRoute = AdminAnunciosRouteImport.update({
+  id: '/admin-anuncios',
+  path: '/admin-anuncios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
@@ -55,6 +62,11 @@ const EmpresaRoute = EmpresaRouteImport.update({
 const MarketplaceRoute = MarketplaceRouteImport.update({
   id: '/marketplace',
   path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeusAnunciosRoute = MeusAnunciosRouteImport.update({
+  id: '/meus-anuncios',
+  path: '/meus-anuncios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MudancasRoute = MudancasRouteImport.update({
@@ -86,11 +98,13 @@ const ViaturaIdRoute = ViaturaIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -100,11 +114,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -115,11 +131,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
@@ -131,11 +149,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
     | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
@@ -145,11 +165,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
     | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
@@ -159,11 +181,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
     | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
@@ -174,11 +198,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AdminAnunciosRoute: typeof AdminAnunciosRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
   MarketplaceRoute: typeof MarketplaceRoute
+  MeusAnunciosRoute: typeof MeusAnunciosRoute
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
@@ -200,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-anuncios': {
+      id: '/admin-anuncios'
+      path: '/admin-anuncios'
+      fullPath: '/admin-anuncios'
+      preLoaderRoute: typeof AdminAnunciosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-funcoes': {
@@ -235,6 +268,13 @@ declare module '@tanstack/react-router' {
       path: '/marketplace'
       fullPath: '/marketplace'
       preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meus-anuncios': {
+      id: '/meus-anuncios'
+      path: '/meus-anuncios'
+      fullPath: '/meus-anuncios'
+      preLoaderRoute: typeof MeusAnunciosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mudancas': {
@@ -278,11 +318,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AdminAnunciosRoute: AdminAnunciosRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
   MarketplaceRoute: MarketplaceRoute,
+  MeusAnunciosRoute: MeusAnunciosRoute,
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
