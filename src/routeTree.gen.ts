@@ -15,9 +15,11 @@ import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -50,6 +52,11 @@ const EmpresaRoute = EmpresaRouteImport.update({
   path: '/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MudancasRoute = MudancasRouteImport.update({
   id: '/mudancas',
   path: '/mudancas',
@@ -65,6 +72,11 @@ const ReservasRoute = ReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnuncioIdRoute = AnuncioIdRouteImport.update({
+  id: '/anuncio/$id',
+  path: '/anuncio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ViaturaIdRoute = ViaturaIdRouteImport.update({
   id: '/viatura/$id',
   path: '/viatura/$id',
@@ -78,9 +90,11 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesByTo {
@@ -90,9 +104,11 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesById {
@@ -103,9 +119,11 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRouteTypes {
@@ -117,9 +135,11 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -129,9 +149,11 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   id:
     | '__root__'
@@ -141,9 +163,11 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   fileRoutesById: FileRoutesById
 }
@@ -154,9 +178,11 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
+  AnuncioIdRoute: typeof AnuncioIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
 }
 
@@ -204,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mudancas': {
       id: '/mudancas'
       path: '/mudancas'
@@ -225,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anuncio/$id': {
+      id: '/anuncio/$id'
+      path: '/anuncio/$id'
+      fullPath: '/anuncio/$id'
+      preLoaderRoute: typeof AnuncioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/viatura/$id': {
       id: '/viatura/$id'
       path: '/viatura/$id'
@@ -242,9 +282,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
+  MarketplaceRoute: MarketplaceRoute,
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
+  AnuncioIdRoute: AnuncioIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,
 }
 export const routeTree = rootRouteImport
