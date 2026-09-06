@@ -11,13 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as MeusAnunciosRouteImport } from './routes/meus-anuncios'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -28,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnunciosRoute = AdminAnunciosRouteImport.update({
+  id: '/admin-anuncios',
+  path: '/admin-anuncios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
@@ -50,6 +59,16 @@ const EmpresaRoute = EmpresaRouteImport.update({
   path: '/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeusAnunciosRoute = MeusAnunciosRouteImport.update({
+  id: '/meus-anuncios',
+  path: '/meus-anuncios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MudancasRoute = MudancasRouteImport.update({
   id: '/mudancas',
   path: '/mudancas',
@@ -65,6 +84,11 @@ const ReservasRoute = ReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnuncioIdRoute = AnuncioIdRouteImport.update({
+  id: '/anuncio/$id',
+  path: '/anuncio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ViaturaIdRoute = ViaturaIdRouteImport.update({
   id: '/viatura/$id',
   path: '/viatura/$id',
@@ -74,38 +98,50 @@ const ViaturaIdRoute = ViaturaIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
 }
 export interface FileRouteTypes {
@@ -113,50 +149,66 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin-anuncios'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/marketplace'
+    | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/anuncio/$id'
     | '/viatura/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AdminAnunciosRoute: typeof AdminAnunciosRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
+  MarketplaceRoute: typeof MarketplaceRoute
+  MeusAnunciosRoute: typeof MeusAnunciosRoute
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
+  AnuncioIdRoute: typeof AnuncioIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
 }
 
@@ -174,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-anuncios': {
+      id: '/admin-anuncios'
+      path: '/admin-anuncios'
+      fullPath: '/admin-anuncios'
+      preLoaderRoute: typeof AdminAnunciosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-funcoes': {
@@ -204,6 +263,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meus-anuncios': {
+      id: '/meus-anuncios'
+      path: '/meus-anuncios'
+      fullPath: '/meus-anuncios'
+      preLoaderRoute: typeof MeusAnunciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mudancas': {
       id: '/mudancas'
       path: '/mudancas'
@@ -225,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anuncio/$id': {
+      id: '/anuncio/$id'
+      path: '/anuncio/$id'
+      fullPath: '/anuncio/$id'
+      preLoaderRoute: typeof AnuncioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/viatura/$id': {
       id: '/viatura/$id'
       path: '/viatura/$id'
@@ -238,13 +318,17 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AdminAnunciosRoute: AdminAnunciosRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
+  MarketplaceRoute: MarketplaceRoute,
+  MeusAnunciosRoute: MeusAnunciosRoute,
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
+  AnuncioIdRoute: AnuncioIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,
 }
 export const routeTree = rootRouteImport
