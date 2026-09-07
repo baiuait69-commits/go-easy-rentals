@@ -1,242 +1,154 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { MapPin, Search, Star, SlidersHorizontal, Gauge, Users, Truck, ChevronRight } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Search, ChevronRight, Star } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { kwanza, viaturas, type Categoria } from "@/lib/mock-data";
+import { kz, produtos, ramos } from "@/lib/catalogo";
 import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kubuka — Alugue viaturas perto de si" },
+      { title: "O Meu Carro — Viaturas, máquinas e equipamentos" },
       {
         name: "description",
         content:
-          "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real.",
+          "Alugue viaturas, máquinas e equipamentos em Angola. Escolha por categoria, subcategoria e marca, compare preços e reserve num instante.",
       },
-      { property: "og:title", content: "Kubuka — Alugue viaturas perto de si" },
+      { property: "og:title", content: "O Meu Carro — Viaturas, máquinas e equipamentos" },
       {
         property: "og:description",
-        content: "Pesquise viaturas por localização em Luanda, filtre por preço, marca, categoria e transmissão, e reserve em tempo real.",
+        content: "Alugue viaturas, máquinas e equipamentos em Angola. Mais opções. Mais mobilidade. Sempre consigo.",
       },
     ],
   }),
-  component: Index,
+  component: Inicio,
 });
 
-const categorias: (Categoria | "Todas")[] = ["Todas", "SUV", "Sedan", "Compacto", "Pick-up", "Luxo"];
-
-const carros = viaturas.filter((v) => v.categoria !== "Carrinha");
-
-function Index() {
+function Inicio() {
+  const navigate = useNavigate();
   const [termo, setTermo] = useState("");
-  const [categoria, setCategoria] = useState<Categoria | "Todas">("Todas");
-  const [marca, setMarca] = useState("todas");
-  const [transmissao, setTransmissao] = useState("todas");
-  const [precoMax, setPrecoMax] = useState(100000);
-  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
-  const marcas = useMemo(() => Array.from(new Set(carros.map((v) => v.marca))), []);
+  const sugestoes = termo.trim()
+    ? produtos.filter((p) =>
+        `${p.nome} ${p.marca} ${p.resumo}`.toLowerCase().includes(termo.trim().toLowerCase()),
+      )
+    : [];
 
-  const resultados = carros.filter((v) => {
-    const alvo = `${v.marca} ${v.modelo} ${v.zona}`.toLowerCase();
-    return (
-      alvo.includes(termo.toLowerCase()) &&
-      (categoria === "Todas" || v.categoria === categoria) &&
-      (marca === "todas" || v.marca === marca) &&
-      (transmissao === "todas" || v.transmissao === transmissao) &&
-      v.precoDia <= precoMax
-    );
-  });
+  const destaques = produtos.filter((p) => p.destaque);
 
   return (
     <AppShell>
-      <header className="bg-heat px-5 pt-8 pb-10 text-foreground">
+      <div className="bg-heat px-5 pb-8 pt-10 text-center">
         <img
           src={logoAsset.url}
-          alt="Teu Carro — app de aluguer de carros"
+          alt="O Meu Carro — viaturas, máquinas e equipamentos"
           width={1280}
           height={699}
-          className="mb-4 h-14 w-auto rounded-xl bg-card object-contain px-2 py-1"
+          className="mx-auto h-20 w-auto rounded-2xl bg-card object-contain px-3 py-2"
         />
-        <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-widest opacity-90">
-          <MapPin className="h-3.5 w-3.5" /> Aluguer diário · Talatona, Luanda
+        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary">
+          Viaturas · Máquinas · Equipamentos
         </p>
-        <h1 className="mt-2 text-3xl leading-tight">
-          A viatura certa,
-          <br /> onde estiver.
-        </h1>
-        <div className="mt-5 flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={termo}
-              onChange={(e) => setTermo(e.target.value)}
-              placeholder="Marca, modelo ou zona"
-              className="h-12 rounded-2xl border-0 bg-card pl-9 text-foreground"
-            />
-          </div>
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-12 w-12 rounded-2xl"
-            onClick={() => setFiltrosAbertos((v) => !v)}
-            aria-label="Filtros"
-          >
-            <SlidersHorizontal className="h-5 w-5" />
-          </Button>
-        </div>
-      </header>
+      </div>
 
-      <div className="-mt-5 rounded-t-3xl bg-background px-5 pt-5">
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {categorias.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategoria(c)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                categoria === c
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-muted-foreground"
-              }`}
+      <div className="-mt-4 rounded-t-3xl bg-background px-5 pt-6">
+        <h1 className="text-center text-xl">O que pretende alugar?</h1>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {ramos.map((r) => (
+            <Link
+              key={r.slug}
+              to="/catalogo/$ramo"
+              params={{ ramo: r.slug }}
+              className="rounded-2xl border border-primary/40 bg-card p-4 text-center transition-colors hover:border-primary"
             >
-              {c}
-            </button>
+              <span className="block text-3xl">{r.icone}</span>
+              <span className="mt-2 block font-display text-sm uppercase tracking-wide text-primary">
+                {r.nome}
+              </span>
+              <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">
+                {r.descricao}
+              </span>
+            </Link>
           ))}
         </div>
 
-        <Link
-          to="/mudancas"
-          className="mt-4 flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left"
-        >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Truck className="h-5 w-5" />
-          </span>
-          <span className="flex-1">
-            <span className="block text-sm font-semibold">Aluguer de carrinha</span>
-            <span className="block text-xs text-muted-foreground">
-              Mudanças de casa e transporte de mercadoria, com motorista opcional.
-            </span>
-          </span>
-          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
-        </Link>
-
-        {filtrosAbertos && (
-          <div className="mt-4 space-y-4 rounded-2xl border border-border bg-card p-4">
-            <div className="grid grid-cols-2 gap-3">
-              <Select value={marca} onValueChange={setMarca}>
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Marca" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todas">Todas as marcas</SelectItem>
-                  {marcas.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={transmissao} onValueChange={setTransmissao}>
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Transmissão" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todas">Qualquer caixa</SelectItem>
-                  <SelectItem value="Manual">Manual</SelectItem>
-                  <SelectItem value="Automática">Automática</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Preço máximo / dia</span>
-                <span className="font-semibold text-accent">{kwanza(precoMax)}</span>
-              </div>
-              <Slider
-                className="mt-3"
-                min={20000}
-                max={120000}
-                step={5000}
-                value={[precoMax]}
-                onValueChange={([v]) => setPrecoMax(v ?? 120000)}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="mt-5 flex items-baseline justify-between">
-          <h2 className="text-lg">Disponíveis perto de si</h2>
-          <span className="text-sm text-muted-foreground">{resultados.length} viaturas</span>
+        <div className="relative mt-5">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={termo}
+            onChange={(e) => setTermo(e.target.value)}
+            placeholder="Pesquisar o que procura..."
+            className="h-12 rounded-2xl border border-primary/30 bg-card pl-9"
+          />
         </div>
 
-        <ul className="mt-3 space-y-4">
-          {resultados.map((v) => (
-            <li key={v.id}>
+        {sugestoes.length > 0 && (
+          <ul className="mt-3 space-y-2">
+            {sugestoes.slice(0, 6).map((p) => (
+              <li key={p.id}>
+                <Link
+                  to="/produto/$id"
+                  params={{ id: p.id }}
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3"
+                >
+                  <span className="text-xl">{p.icone}</span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-semibold">{p.nome}</span>
+                    <span className="block text-[11px] text-muted-foreground">{p.resumo}</span>
+                  </span>
+                  <span className="text-xs font-semibold text-primary">{kz(p.precoDia)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <h2 className="mt-7 text-base">Destaques</h2>
+        <ul className="mt-3 space-y-3">
+          {destaques.map((p) => (
+            <li key={p.id}>
               <Link
-                to="/viatura/$id"
-                params={{ id: v.id }}
-                className="block overflow-hidden rounded-3xl border border-border bg-card"
+                to="/produto/$id"
+                params={{ id: p.id }}
+                className="flex items-center gap-3 overflow-hidden rounded-2xl border border-primary/30 bg-card p-3"
               >
-                <div className="relative">
+                {p.imagem ? (
                   <img
-                    src={v.imagem}
-                    alt={`${v.marca} ${v.modelo}`}
+                    src={p.imagem}
+                    alt={p.nome}
                     loading="lazy"
-                    width={1024}
-                    height={768}
-                    className="h-44 w-full object-cover"
+                    width={200}
+                    height={140}
+                    className="h-16 w-20 shrink-0 rounded-xl object-cover"
                   />
-                  <div className="absolute left-3 top-3 flex gap-2">
-                    {v.entregaGratis && <Badge className="bg-accent text-accent-foreground">Entrega grátis</Badge>}
-                    {!v.disponivel && <Badge variant="secondary">Indisponível hoje</Badge>}
-                  </div>
-                </div>
-                <div className="space-y-2 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-base">
-                        {v.marca} {v.modelo}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">
-                        {v.empresa} · {v.zona}
-                      </p>
-                    </div>
-                    <p className="shrink-0 text-right">
-                      <span className="block font-display text-accent">{kwanza(v.precoDia)}</span>
-                      <span className="text-[11px] text-muted-foreground">por dia</span>
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 text-accent" /> {v.avaliacao}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Gauge className="h-3.5 w-3.5" /> {v.transmissao}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3.5 w-3.5" /> {v.lugares} lugares
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" /> {v.distanciaKm} km
-                    </span>
-                  </div>
-                </div>
+                ) : (
+                  <span className="flex h-16 w-20 shrink-0 items-center justify-center rounded-xl bg-secondary text-2xl">
+                    {p.icone}
+                  </span>
+                )}
+                <span className="flex-1">
+                  <span className="block text-sm font-semibold">{p.nome}</span>
+                  <span className="block text-[11px] text-muted-foreground">{p.resumo}</span>
+                  <span className="mt-1 block text-sm font-semibold text-primary">
+                    {kz(p.precoDia)} <span className="text-[10px] text-muted-foreground">/ dia</span>
+                  </span>
+                </span>
+                <Star className="h-4 w-4 shrink-0 fill-primary text-primary" />
               </Link>
             </li>
           ))}
-          {resultados.length === 0 && (
-            <li className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              Nenhuma viatura corresponde aos filtros escolhidos.
-            </li>
-          )}
         </ul>
+
+        <Link
+          to="/marketplace"
+          className="mt-5 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm"
+        >
+          <span className="flex-1">Ver todos os anúncios publicados</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
       </div>
     </AppShell>
   );
