@@ -23,6 +23,8 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
+import { Route as CatalogoRamoIndexRouteImport } from './routes/catalogo.$ramo.index'
+import { Route as CatalogoRamoCategoriaIndexRouteImport } from './routes/catalogo.$ramo.$categoria.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -94,6 +96,17 @@ const ViaturaIdRoute = ViaturaIdRouteImport.update({
   path: '/viatura/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CatalogoRamoIndexRoute = CatalogoRamoIndexRouteImport.update({
+  id: '/catalogo/$ramo/',
+  path: '/catalogo/$ramo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogoRamoCategoriaIndexRoute =
+  CatalogoRamoCategoriaIndexRouteImport.update({
+    id: '/catalogo/$ramo/$categoria/',
+    path: '/catalogo/$ramo/$categoria/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +123,8 @@ export interface FileRoutesByFullPath {
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
+  '/catalogo/$ramo/': typeof CatalogoRamoIndexRoute
+  '/catalogo/$ramo/$categoria/': typeof CatalogoRamoCategoriaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +141,8 @@ export interface FileRoutesByTo {
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
+  '/catalogo/$ramo': typeof CatalogoRamoIndexRoute
+  '/catalogo/$ramo/$categoria': typeof CatalogoRamoCategoriaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +160,8 @@ export interface FileRoutesById {
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
+  '/catalogo/$ramo/': typeof CatalogoRamoIndexRoute
+  '/catalogo/$ramo/$categoria/': typeof CatalogoRamoCategoriaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +180,8 @@ export interface FileRouteTypes {
     | '/reservas'
     | '/anuncio/$id'
     | '/viatura/$id'
+    | '/catalogo/$ramo/'
+    | '/catalogo/$ramo/$categoria/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,6 +198,8 @@ export interface FileRouteTypes {
     | '/reservas'
     | '/anuncio/$id'
     | '/viatura/$id'
+    | '/catalogo/$ramo'
+    | '/catalogo/$ramo/$categoria'
   id:
     | '__root__'
     | '/'
@@ -193,6 +216,8 @@ export interface FileRouteTypes {
     | '/reservas'
     | '/anuncio/$id'
     | '/viatura/$id'
+    | '/catalogo/$ramo/'
+    | '/catalogo/$ramo/$categoria/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +235,8 @@ export interface RootRouteChildren {
   ReservasRoute: typeof ReservasRoute
   AnuncioIdRoute: typeof AnuncioIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
+  CatalogoRamoIndexRoute: typeof CatalogoRamoIndexRoute
+  CatalogoRamoCategoriaIndexRoute: typeof CatalogoRamoCategoriaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -312,6 +339,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViaturaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catalogo/$ramo/': {
+      id: '/catalogo/$ramo/'
+      path: '/catalogo/$ramo'
+      fullPath: '/catalogo/$ramo/'
+      preLoaderRoute: typeof CatalogoRamoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogo/$ramo/$categoria/': {
+      id: '/catalogo/$ramo/$categoria/'
+      path: '/catalogo/$ramo/$categoria'
+      fullPath: '/catalogo/$ramo/$categoria/'
+      preLoaderRoute: typeof CatalogoRamoCategoriaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +371,8 @@ const rootRouteChildren: RootRouteChildren = {
   ReservasRoute: ReservasRoute,
   AnuncioIdRoute: AnuncioIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,
+  CatalogoRamoIndexRoute: CatalogoRamoIndexRoute,
+  CatalogoRamoCategoriaIndexRoute: CatalogoRamoCategoriaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
