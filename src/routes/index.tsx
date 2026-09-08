@@ -5,7 +5,6 @@ import { Search, ChevronRight, Star } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
 import { kz, produtos, ramos } from "@/lib/catalogo";
-import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
