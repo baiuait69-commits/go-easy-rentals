@@ -16,15 +16,18 @@ import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as MeusAnunciosRouteImport } from './routes/meus-anuncios'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
 import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
+import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
 import { Route as CatalogoRamoIndexRouteImport } from './routes/catalogo.$ramo.index'
 import { Route as CatalogoRamoCategoriaIndexRouteImport } from './routes/catalogo.$ramo.$categoria.index'
+import { Route as CatalogoRamoCategoriaSubIndexRouteImport } from './routes/catalogo.$ramo.$categoria.$sub.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +64,11 @@ const EmpresaRoute = EmpresaRouteImport.update({
   path: '/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
   id: '/marketplace',
   path: '/marketplace',
@@ -91,6 +99,11 @@ const AnuncioIdRoute = AnuncioIdRouteImport.update({
   path: '/anuncio/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutoIdRoute = ProdutoIdRouteImport.update({
+  id: '/produto/$id',
+  path: '/produto/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ViaturaIdRoute = ViaturaIdRouteImport.update({
   id: '/viatura/$id',
   path: '/viatura/$id',
@@ -107,6 +120,12 @@ const CatalogoRamoCategoriaIndexRoute =
     path: '/catalogo/$ramo/$categoria/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CatalogoRamoCategoriaSubIndexRoute =
+  CatalogoRamoCategoriaSubIndexRouteImport.update({
+    id: '/catalogo/$ramo/$categoria/$sub/',
+    path: '/catalogo/$ramo/$categoria/$sub/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,15 +135,18 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/favoritos': typeof FavoritosRoute
   '/marketplace': typeof MarketplaceRoute
   '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
   '/catalogo/$ramo/': typeof CatalogoRamoIndexRoute
   '/catalogo/$ramo/$categoria/': typeof CatalogoRamoCategoriaIndexRoute
+  '/catalogo/$ramo/$categoria/$sub/': typeof CatalogoRamoCategoriaSubIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,15 +156,18 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/favoritos': typeof FavoritosRoute
   '/marketplace': typeof MarketplaceRoute
   '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
   '/catalogo/$ramo': typeof CatalogoRamoIndexRoute
   '/catalogo/$ramo/$categoria': typeof CatalogoRamoCategoriaIndexRoute
+  '/catalogo/$ramo/$categoria/$sub': typeof CatalogoRamoCategoriaSubIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,15 +178,18 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
+  '/favoritos': typeof FavoritosRoute
   '/marketplace': typeof MarketplaceRoute
   '/meus-anuncios': typeof MeusAnunciosRoute
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
   '/anuncio/$id': typeof AnuncioIdRoute
+  '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
   '/catalogo/$ramo/': typeof CatalogoRamoIndexRoute
   '/catalogo/$ramo/$categoria/': typeof CatalogoRamoCategoriaIndexRoute
+  '/catalogo/$ramo/$categoria/$sub/': typeof CatalogoRamoCategoriaSubIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -173,15 +201,18 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/favoritos'
     | '/marketplace'
     | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/anuncio/$id'
+    | '/produto/$id'
     | '/viatura/$id'
     | '/catalogo/$ramo/'
     | '/catalogo/$ramo/$categoria/'
+    | '/catalogo/$ramo/$categoria/$sub/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -191,15 +222,18 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/favoritos'
     | '/marketplace'
     | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/anuncio/$id'
+    | '/produto/$id'
     | '/viatura/$id'
     | '/catalogo/$ramo'
     | '/catalogo/$ramo/$categoria'
+    | '/catalogo/$ramo/$categoria/$sub'
   id:
     | '__root__'
     | '/'
@@ -209,15 +243,18 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/empresa'
+    | '/favoritos'
     | '/marketplace'
     | '/meus-anuncios'
     | '/mudancas'
     | '/perfil'
     | '/reservas'
     | '/anuncio/$id'
+    | '/produto/$id'
     | '/viatura/$id'
     | '/catalogo/$ramo/'
     | '/catalogo/$ramo/$categoria/'
+    | '/catalogo/$ramo/$categoria/$sub/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,15 +265,18 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
+  FavoritosRoute: typeof FavoritosRoute
   MarketplaceRoute: typeof MarketplaceRoute
   MeusAnunciosRoute: typeof MeusAnunciosRoute
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
   AnuncioIdRoute: typeof AnuncioIdRoute
+  ProdutoIdRoute: typeof ProdutoIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
   CatalogoRamoIndexRoute: typeof CatalogoRamoIndexRoute
   CatalogoRamoCategoriaIndexRoute: typeof CatalogoRamoCategoriaIndexRoute
+  CatalogoRamoCategoriaSubIndexRoute: typeof CatalogoRamoCategoriaSubIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -290,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/marketplace': {
       id: '/marketplace'
       path: '/marketplace'
@@ -332,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnuncioIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produto/$id': {
+      id: '/produto/$id'
+      path: '/produto/$id'
+      fullPath: '/produto/$id'
+      preLoaderRoute: typeof ProdutoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/viatura/$id': {
       id: '/viatura/$id'
       path: '/viatura/$id'
@@ -353,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRamoCategoriaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catalogo/$ramo/$categoria/$sub/': {
+      id: '/catalogo/$ramo/$categoria/$sub/'
+      path: '/catalogo/$ramo/$categoria/$sub'
+      fullPath: '/catalogo/$ramo/$categoria/$sub/'
+      preLoaderRoute: typeof CatalogoRamoCategoriaSubIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -364,15 +425,18 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
+  FavoritosRoute: FavoritosRoute,
   MarketplaceRoute: MarketplaceRoute,
   MeusAnunciosRoute: MeusAnunciosRoute,
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
   AnuncioIdRoute: AnuncioIdRoute,
+  ProdutoIdRoute: ProdutoIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,
   CatalogoRamoIndexRoute: CatalogoRamoIndexRoute,
   CatalogoRamoCategoriaIndexRoute: CatalogoRamoCategoriaIndexRoute,
+  CatalogoRamoCategoriaSubIndexRoute: CatalogoRamoCategoriaSubIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
