@@ -5,7 +5,6 @@ import { Search, ChevronRight, Star } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
 import { kz, produtos, ramos } from "@/lib/catalogo";
-import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,20 +39,13 @@ function Inicio() {
 
   return (
     <AppShell>
-      <div className="bg-heat px-5 pb-8 pt-10 text-center">
-        <img
-          src={logoAsset.url}
-          alt="O Meu Carro — viaturas, máquinas e equipamentos"
-          width={1280}
-          height={699}
-          className="mx-auto h-20 w-auto rounded-2xl bg-card object-contain px-3 py-2"
-        />
-        <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary">
+      <div className="bg-heat px-5 pb-6 pt-6 text-center">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-primary">
           Viaturas · Máquinas · Equipamentos
         </p>
       </div>
 
-      <div className="-mt-4 rounded-t-3xl bg-background px-5 pt-6">
+      <div className="rounded-t-3xl bg-background px-5 pt-6">
         <h1 className="text-center text-xl">O que pretende alugar?</h1>
 
         <div className="relative mt-4">
