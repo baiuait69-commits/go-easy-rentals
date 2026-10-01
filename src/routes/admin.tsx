@@ -14,9 +14,11 @@ import {
   kwanza,
   pagamentosAdmin,
   parceiros,
+  reservas,
   ticketsSuporte,
   utilizacaoSemanal,
   utilizadores,
+  viaturas,
 } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/admin")({
@@ -26,7 +28,7 @@ export const Route = createFileRoute("/admin")({
       {
         name: "description",
         content:
-          "Painel de administração Kubuka: utilizadores, aprovação de parceiros, estatísticas, pagamentos, comissões e suporte.",
+          "Painel de administração Kubuka: utilizadores, reservas, aprovação de parceiros, estatísticas, pagamentos, comissões e suporte.",
       },
       { property: "og:title", content: "Dashboard do gestor — Kubuka" },
       { property: "og:description", content: "Gestão global da plataforma de aluguer de viaturas em Angola." },
@@ -78,7 +80,7 @@ function Admin() {
 
       <div className="mt-4 grid grid-cols-3 gap-2 px-5">
         <Kpi rotulo="Utilizadores" valor={`${utilizadores.length}`} />
-        <Kpi rotulo="Parceiros" valor={`${parceiros.length}`} />
+        <Kpi rotulo="Reservas" valor={`${reservas.length}`} />
         <Kpi rotulo="Pendentes" valor={`${pendentes.length}`} />
       </div>
 
@@ -102,18 +104,11 @@ function Admin() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={utilizacaoSemanal}>
                   <XAxis dataKey="dia" stroke="currentColor" fontSize={11} tickLine={false} axisLine={false} />
-                  <Area
-                    dataKey="reservas"
-                    stroke="var(--color-chart-1)"
-                    fill="var(--color-chart-1)"
-                    fillOpacity={0.25}
-                    strokeWidth={2}
-                  />
+                  <Area dataKey="reservas" stroke="var(--color-chart-1)" fill="var(--color-chart-1)" fillOpacity={0.25} strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </section>
-
           <section className="grid grid-cols-2 gap-2">
             <Kpi rotulo="Volume transaccionado" valor={kwanza(volume)} />
             <Kpi rotulo="Comissões" valor={kwanza(comissaoTotal)} />
@@ -123,28 +118,57 @@ function Admin() {
         </TabsContent>
         )}
 
+        {areas.includes("reservas") && (
+        <TabsContent value="reservas" className="mt-4 space-y-3">
+          <section className="rounded-2xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm">Reservas</h2>
+                <p className="mt-1 text-xs text-muted-foreground">Acompanha estado, cliente, viatura e comissão de cada reserva.</p>
+              </div>
+              <Badge variant="secondary">{reservas.length} total</Badge>
+            </div>
+          </section>
+          {reservas.map((r) => {
+            const viatura = viaturas.find((v) => v.id === r.viaturaId);
+            const comissao = Math.round(r.total * 0.12);
+            return (
+              <article key={r.id} className="rounded-2xl border border-border bg-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-sm font-semibold">{r.id}</h2>
+                      <Badge variant={r.estado === "Concluída" ? "default" : "secondary"}>{r.estado}</Badge>
+                    </div>
+                    <p className="mt-2 text-sm">{r.cliente}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {viatura ? `${viatura.marca} ${viatura.modelo}` : r.viaturaId} · {r.periodo}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="font-display text-sm text-accent">{kwanza(r.total)}</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Comissão {kwanza(comissao)}</p>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </TabsContent>
+        )}
+
         {areas.includes("suporte") && (
         <TabsContent value="suporte" className="mt-4 space-y-4">
           <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="flex items-center gap-2 text-sm">
-              <Headphones className="h-4 w-4 text-accent" /> Suporte ao cliente
-            </h2>
+            <h2 className="flex items-center gap-2 text-sm"><Headphones className="h-4 w-4 text-accent" /> Suporte ao cliente</h2>
             <ul className="mt-3 space-y-3">
               {ticketsSuporte.map((t) => (
                 <li key={t.id} className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm">{t.assunto}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t.id} · {t.utilizador} · prioridade {t.prioridade}
-                    </p>
-                  </div>
+                  <div className="min-w-0"><p className="truncate text-sm">{t.assunto}</p><p className="text-xs text-muted-foreground">{t.id} · {t.utilizador} · prioridade {t.prioridade}</p></div>
                   <Badge variant={t.estado === "Resolvido" ? "default" : "secondary"}>{t.estado}</Badge>
                 </li>
               ))}
             </ul>
-            <Button variant="secondary" className="mt-4 w-full rounded-xl" onClick={() => toast("Abrindo caixa de suporte")}>
-              Abrir centro de suporte
-            </Button>
+            <Button variant="secondary" className="mt-4 w-full rounded-xl" onClick={() => toast("Abrindo caixa de suporte")}>Abrir centro de suporte</Button>
           </section>
         </TabsContent>
         )}
@@ -154,39 +178,12 @@ function Admin() {
           {parceiros.map((p) => (
             <article key={p.id} className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <h2 className="truncate text-sm">{p.nome}</h2>
-                  <p className="text-xs text-muted-foreground">
-                    NIF {p.nif} · {p.zona} · {p.frota} viaturas
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">Plano {p.plano}</p>
-                </div>
+                <div className="min-w-0"><h2 className="truncate text-sm">{p.nome}</h2><p className="text-xs text-muted-foreground">NIF {p.nif} · {p.zona} · {p.frota} viaturas</p><p className="mt-1 text-xs text-muted-foreground">Plano {p.plano}</p></div>
                 <Badge variant={p.estado === "Aprovado" ? "default" : "secondary"}>{p.estado}</Badge>
               </div>
-              {!isAdmin ? (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Apenas gestores podem aprovar ou suspender parceiros.
-                </p>
-              ) : p.estado === "Pendente" ? (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button className="rounded-xl" onClick={() => toast.success(`${p.nome} aprovado`)}>
-                    <Check className="mr-1 h-4 w-4" /> Aprovar
-                  </Button>
-                  <Button variant="secondary" className="rounded-xl" onClick={() => toast(`${p.nome} rejeitado`)}>
-                    <X className="mr-1 h-4 w-4" /> Rejeitar
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="secondary"
-                  className="mt-3 w-full rounded-xl"
-                  onClick={() =>
-                    toast(p.estado === "Suspenso" ? `${p.nome} reactivado` : `${p.nome} suspenso`)
-                  }
-                >
-                  <Ban className="mr-1 h-4 w-4" /> {p.estado === "Suspenso" ? "Reactivar" : "Suspender"}
-                </Button>
-              )}
+              {!isAdmin ? <p className="mt-3 text-xs text-muted-foreground">Apenas gestores podem aprovar ou suspender parceiros.</p> : p.estado === "Pendente" ? (
+                <div className="mt-3 grid grid-cols-2 gap-2"><Button className="rounded-xl" onClick={() => toast.success(`${p.nome} aprovado`)}><Check className="mr-1 h-4 w-4" /> Aprovar</Button><Button variant="secondary" className="rounded-xl" onClick={() => toast(`${p.nome} rejeitado`)}><X className="mr-1 h-4 w-4" /> Rejeitar</Button></div>
+              ) : <Button variant="secondary" className="mt-3 w-full rounded-xl" onClick={() => toast(p.estado === "Suspenso" ? `${p.nome} reactivado` : `${p.nome} suspenso`)}><Ban className="mr-1 h-4 w-4" /> {p.estado === "Suspenso" ? "Reactivar" : "Suspender"}</Button>}
             </article>
           ))}
         </TabsContent>
@@ -196,27 +193,8 @@ function Admin() {
         <TabsContent value="utilizadores" className="mt-4 space-y-3">
           {utilizadores.map((u) => (
             <article key={u.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-card p-4">
-              <div className="min-w-0">
-                <h2 className="flex items-center gap-2 truncate text-sm">
-                  <Users className="h-4 w-4 text-accent" /> {u.nome}
-                </h2>
-                <p className="truncate text-xs text-muted-foreground">{u.email}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {u.tipo} · {u.reservas} reservas · {u.verificado ? "verificado" : "por verificar"}
-                </p>
-              </div>
-              {isAdmin ? (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="rounded-xl"
-                  onClick={() => toast(u.activo ? `${u.nome} bloqueado` : `${u.nome} reactivado`)}
-                >
-                  {u.activo ? "Bloquear" : "Reactivar"}
-                </Button>
-              ) : (
-                <Badge variant="secondary">{u.activo ? "Activo" : "Bloqueado"}</Badge>
-              )}
+              <div className="min-w-0"><h2 className="flex items-center gap-2 truncate text-sm"><Users className="h-4 w-4 text-accent" /> {u.nome}</h2><p className="truncate text-xs text-muted-foreground">{u.email}</p><p className="mt-1 text-xs text-muted-foreground">{u.tipo} · {u.reservas} reservas · {u.verificado ? "verificado" : "por verificar"}</p></div>
+              {isAdmin ? <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => toast(u.activo ? `${u.nome} bloqueado` : `${u.nome} reactivado`)}>{u.activo ? "Bloquear" : "Reactivar"}</Button> : <Badge variant="secondary">{u.activo ? "Activo" : "Bloqueado"}</Badge>}
             </article>
           ))}
         </TabsContent>
@@ -224,31 +202,8 @@ function Admin() {
 
         {areas.includes("pagamentos") && (
         <TabsContent value="pagamentos" className="mt-4 space-y-3">
-          <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="flex items-center gap-2 text-sm">
-              <CircleDollarSign className="h-4 w-4 text-accent" /> Comissões acumuladas
-            </h2>
-            <p className="mt-1 font-display text-2xl text-accent">{kwanza(comissaoTotal)}</p>
-            <p className="text-xs text-muted-foreground">12% sobre {kwanza(volume)} transaccionados</p>
-          </section>
-
-          {pagamentosAdmin.map((p) => (
-            <article key={p.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-sm">{p.id}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {p.origem} · {p.metodo}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">Comissão {kwanza(p.comissao)}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-display text-accent">{kwanza(p.valor)}</p>
-                  <Badge variant={p.estado === "Liquidado" ? "default" : "secondary"}>{p.estado}</Badge>
-                </div>
-              </div>
-            </article>
-          ))}
+          <section className="rounded-2xl border border-border bg-card p-4"><h2 className="flex items-center gap-2 text-sm"><CircleDollarSign className="h-4 w-4 text-accent" /> Comissões acumuladas</h2><p className="mt-1 font-display text-2xl text-accent">{kwanza(comissaoTotal)}</p><p className="text-xs text-muted-foreground">12% sobre {kwanza(volume)} transaccionados</p></section>
+          {pagamentosAdmin.map((p) => <article key={p.id} className="rounded-2xl border border-border bg-card p-4"><div className="flex items-start justify-between gap-2"><div><h3 className="text-sm">{p.id}</h3><p className="text-xs text-muted-foreground">{p.origem} · {p.metodo}</p><p className="mt-1 text-xs text-muted-foreground">Comissão {kwanza(p.comissao)}</p></div><div className="text-right"><p className="font-display text-accent">{kwanza(p.valor)}</p><Badge variant={p.estado === "Liquidado" ? "default" : "secondary"}>{p.estado}</Badge></div></div></article>)}
         </TabsContent>
         )}
       </Tabs>
@@ -257,10 +212,5 @@ function Admin() {
 }
 
 function Kpi({ rotulo, valor }: { rotulo: string; valor: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-3 text-center">
-      <p className="font-display text-lg text-accent">{valor}</p>
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{rotulo}</p>
-    </div>
-  );
+  return <div className="rounded-2xl border border-border bg-card p-3 text-center"><p className="font-display text-lg text-accent">{valor}</p><p className="text-[11px] uppercase tracking-wide text-muted-foreground">{rotulo}</p></div>;
 }
