@@ -13,7 +13,7 @@ export const listarDocumentosPendentes = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await garantirAdmin(context.supabase, context.userId);
-    const { data, error } = await context.supabase.from("documentos_verificacao").select("id, user_id, tipo, numero, ficheiro_url, estado, motivo_rejeicao, created_at, reviewed_at, perfis(nome, telefone)").order("created_at", { ascending: false });
+    const { data, error } = await (context.supabase as any).from("documentos_verificacao").select("id, user_id, tipo, numero, ficheiro_url, estado, motivo_rejeicao, created_at, reviewed_at, perfis(nome, telefone)").order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
   });
