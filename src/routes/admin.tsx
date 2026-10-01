@@ -18,7 +18,7 @@ function AdminPage() { return <AdminGuard><Admin /></AdminGuard>; }
 
 function Admin() {
   const { roles } = useRoles(); const isAdmin = roles.includes("admin"); const areas = areasPara(roles);
-  const [search, setSearch] = useState(""); const [status, setStatus] = useState("Todos"); const [activeTab, setActiveTab] = useState(areas[0] ?? "estatisticas");
+  const [search, setSearch] = useState(""); const [status, setStatus] = useState("Todos"); const [activeTab, setActiveTab] = useState<string>(areas[0] ?? "estatisticas");
   const [approved, setApproved] = useState<string[]>([]); const [blocked, setBlocked] = useState<string[]>([]);
   const pendentes = parceiros.filter((p) => p.estado === "Pendente"); const volume = pagamentosAdmin.reduce((a, p) => a + p.valor, 0); const comissaoTotal = pagamentosAdmin.reduce((a, p) => a + p.comissao, 0);
   const filtradas = useMemo(() => reservas.filter((r) => { const text = `${r.id} ${r.cliente} ${r.viaturaId}`.toLowerCase(); return (!search || text.includes(search.toLowerCase())) && (status === "Todos" || r.estado === status); }), [search, status]);
