@@ -169,6 +169,86 @@ export type Database = {
         }
         Relationships: []
       }
+      reservas: {
+        Row: {
+          anuncio_id: string | null
+          avaliacao: number | null
+          caucao: number
+          cliente_id: string
+          comentario: string | null
+          comissao: number | null
+          created_at: string
+          estado: Database["public"]["Enums"]["reserva_estado"]
+          extras: Json
+          fim: string
+          fornecedor_id: string | null
+          id: string
+          imagem: string | null
+          inicio: string
+          item_ref: string
+          local: string | null
+          metodo_pagamento: string
+          numero: string
+          titulo: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          anuncio_id?: string | null
+          avaliacao?: number | null
+          caucao?: number
+          cliente_id?: string
+          comentario?: string | null
+          comissao?: number | null
+          created_at?: string
+          estado?: Database["public"]["Enums"]["reserva_estado"]
+          extras?: Json
+          fim: string
+          fornecedor_id?: string | null
+          id?: string
+          imagem?: string | null
+          inicio: string
+          item_ref: string
+          local?: string | null
+          metodo_pagamento: string
+          numero?: string
+          titulo: string
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          anuncio_id?: string | null
+          avaliacao?: number | null
+          caucao?: number
+          cliente_id?: string
+          comentario?: string | null
+          comissao?: number | null
+          created_at?: string
+          estado?: Database["public"]["Enums"]["reserva_estado"]
+          extras?: Json
+          fim?: string
+          fornecedor_id?: string | null
+          id?: string
+          imagem?: string | null
+          inicio?: string
+          item_ref?: string
+          local?: string | null
+          metodo_pagamento?: string
+          numero?: string
+          titulo?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservas_anuncio_id_fkey"
+            columns: ["anuncio_id"]
+            isOneToOne: false
+            referencedRelation: "anuncios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_audit_log: {
         Row: {
           action: string
@@ -250,6 +330,13 @@ export type Database = {
         | "rejeitado"
         | "bloqueado"
       app_role: "admin" | "empresa" | "suporte"
+      reserva_estado:
+        | "pendente"
+        | "confirmada"
+        | "em_utilizacao"
+        | "concluida"
+        | "cancelada"
+        | "rejeitada"
       tipo_conta: "cliente" | "proprietario" | "empresa"
     }
     CompositeTypes: {
@@ -393,6 +480,14 @@ export const Constants = {
         "bloqueado",
       ],
       app_role: ["admin", "empresa", "suporte"],
+      reserva_estado: [
+        "pendente",
+        "confirmada",
+        "em_utilizacao",
+        "concluida",
+        "cancelada",
+        "rejeitada",
+      ],
       tipo_conta: ["cliente", "proprietario", "empresa"],
     },
   },
