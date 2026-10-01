@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
+import { Route as AdminCategoriasRouteImport } from './routes/admin-categorias'
+import { Route as AdminDocumentosRouteImport } from './routes/admin-documentos'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -42,6 +44,16 @@ const AdminRoute = AdminRouteImport.update({
 const AdminAnunciosRoute = AdminAnunciosRouteImport.update({
   id: '/admin-anuncios',
   path: '/admin-anuncios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
+  id: '/admin-categorias',
+  path: '/admin-categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDocumentosRoute = AdminDocumentosRouteImport.update({
+  id: '/admin-documentos',
+  path: '/admin-documentos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
@@ -131,6 +143,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
+  '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
@@ -152,6 +166,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
+  '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
@@ -174,6 +190,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
+  '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
@@ -197,6 +215,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin-anuncios'
+    | '/admin-categorias'
+    | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
@@ -218,6 +238,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin-anuncios'
+    | '/admin-categorias'
+    | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
@@ -239,6 +261,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin-anuncios'
+    | '/admin-categorias'
+    | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
     | '/auth'
@@ -261,6 +285,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AdminAnunciosRoute: typeof AdminAnunciosRoute
+  AdminCategoriasRoute: typeof AdminCategoriasRoute
+  AdminDocumentosRoute: typeof AdminDocumentosRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
@@ -300,6 +326,20 @@ declare module '@tanstack/react-router' {
       path: '/admin-anuncios'
       fullPath: '/admin-anuncios'
       preLoaderRoute: typeof AdminAnunciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-categorias': {
+      id: '/admin-categorias'
+      path: '/admin-categorias'
+      fullPath: '/admin-categorias'
+      preLoaderRoute: typeof AdminCategoriasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-documentos': {
+      id: '/admin-documentos'
+      path: '/admin-documentos'
+      fullPath: '/admin-documentos'
+      preLoaderRoute: typeof AdminDocumentosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-funcoes': {
@@ -421,6 +461,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AdminAnunciosRoute: AdminAnunciosRoute,
+  AdminCategoriasRoute: AdminCategoriasRoute,
+  AdminDocumentosRoute: AdminDocumentosRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
