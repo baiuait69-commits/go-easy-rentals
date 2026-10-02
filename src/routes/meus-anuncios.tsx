@@ -138,8 +138,8 @@ function MeusAnuncios() {
             className="space-y-3 rounded-2xl border border-border bg-card p-4"
             onSubmit={(e) => {
               e.preventDefault();
-              if (!form.titulo.trim() || !form.preco_dia) {
-                toast.error("Indique o título e o preço por dia.");
+              if (!form.titulo.trim()) {
+                toast.error("Indique o título.");
                 return;
               }
               criar.mutate();
