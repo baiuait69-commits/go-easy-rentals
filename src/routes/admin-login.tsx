@@ -65,15 +65,22 @@ function AdminLogin() {
       return;
     }
 
-    const { data: funcoes } = await supabase
+    const { data: funcoes, error: erroFuncoes } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", data.user.id);
     setBusy(false);
 
-    if (!funcoes || funcoes.length === 0) {
+    if (erroFuncoes) {
       await supabase.auth.signOut();
-      toast.error("Esta conta não tem acesso ao painel de gestão.");
+      toast.error("Não foi possível verificar as permissões desta conta. Verifique a configuração de user_roles/RLS no Supabase.");
+      return;
+    }
+
+    const roles = (funcoes ?? []).map((item) => item.role);
+    if (!roles.includes("admin")) {
+      await supabase.auth.signOut();
+      toast.error("Esta conta não tem a função de gestor (admin).");
       return;
     }
 
