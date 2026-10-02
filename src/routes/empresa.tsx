@@ -1,9 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, ResponsiveContainer, XAxis } from "recharts";
 import { Check, FileText, Percent, TrendingUp, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { useAuth } from "@/hooks/useAuth";
+import { useRoles } from "@/hooks/useRoles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -26,6 +28,22 @@ export const Route = createFileRoute("/empresa")({
 });
 
 function Empresa() {
+  const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
+  const { roles, loading: rolesLoading } = useRoles();
+
+  useEffect(() => {
+    if (!authLoading && !session) navigate({ to: "/auth", replace: true });
+  }, [authLoading, session, navigate]);
+
+  if (authLoading || rolesLoading) {
+    return <AppShell><div className="px-5 pt-16 text-center text-sm text-muted-foreground">A verificar a conta da empresa…</div></AppShell>;
+  }
+  if (!session) return null;
+  if (!roles.includes("empresa")) {
+    return <AppShell><div className="px-5 pt-16 text-center"><h1 className="text-2xl">Área da empresa</h1><p className="mt-2 text-sm text-muted-foreground">Esta área é exclusiva para contas de empresa autorizadas.</p><Button asChild className="mt-6 h-12 w-full rounded-2xl"><Link to="/auth">Entrar com outra conta</Link></Button></div></AppShell>;
+  }
+
   const frota = viaturas.filter((v) => v.empresa === "Kilamba Rent-a-Car");
   const pendentes = reservas.filter((r) => r.estado === "Pendente" || r.estado === "Em curso");
   const receita = receitaMensal.at(-1)?.valor ?? 0;
