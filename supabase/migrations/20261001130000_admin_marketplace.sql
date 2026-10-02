@@ -63,3 +63,26 @@ create policy "admins can insert user status"
 on public.admin_user_status for insert with check (public.is_admin());
 create policy "admins can update user status"
 on public.admin_user_status for update using (public.is_admin()) with check (public.is_admin());
+
+-- Enable live dashboard updates when these tables are changed.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'admin_reservations'
+  ) then
+    alter publication supabase_realtime add table public.admin_reservations;
+  end if;
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'admin_partners'
+  ) then
+    alter publication supabase_realtime add table public.admin_partners;
+  end if;
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'admin_user_status'
+  ) then
+    alter publication supabase_realtime add table public.admin_user_status;
+  end if;
+end $$;
