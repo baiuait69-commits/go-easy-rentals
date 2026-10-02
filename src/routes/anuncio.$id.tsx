@@ -137,10 +137,10 @@ function DetalheAnuncio() {
 
         <ReservarDialog
           label="Pedir reserva"
-          disabled={!anuncio.disponivel}
+          disabled={!anuncio.disponivel || anuncio.preco_dia == null}
           item={{
             anuncioId: anuncio.id, ref: anuncio.id, titulo: anuncio.titulo, imagem: anuncio.imagem, local: anuncio.municipio,
-            precos: { hora: anuncio.preco_hora, dia: Number(anuncio.preco_dia), semana: anuncio.preco_semana, mes: anuncio.preco_mes },
+            precos: { hora: anuncio.preco_hora, dia: anuncio.preco_dia == null ? null : Number(anuncio.preco_dia), semana: anuncio.preco_semana, mes: anuncio.preco_mes },
             caucao: Number(anuncio.caucao),
           }}
         />
