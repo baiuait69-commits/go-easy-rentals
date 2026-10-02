@@ -65,16 +65,11 @@ function AdminLogin() {
       return;
     }
 
-    const { data: funcoes, error: errFuncoes } = await supabase
+    const { data: funcoes } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", data.user.id);
     setBusy(false);
-
-    if (errFuncoes) {
-      toast.error("Não foi possível verificar as permissões. Tente novamente.");
-      return;
-    }
 
     if (!funcoes || funcoes.length === 0) {
       await supabase.auth.signOut();
