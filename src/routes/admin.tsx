@@ -1,266 +1,74 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Area, AreaChart, ResponsiveContainer, XAxis } from "recharts";
-import { Ban, Check, CircleDollarSign, Headphones, ShieldCheck, Users, X } from "lucide-react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { ArrowUpRight, CarFront, Check, CircleDollarSign, FileCheck2, Headphones, ShieldCheck, Users, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
 import { AdminGuard } from "@/components/AdminGuard";
-import { AdminShell } from "@/components/AdminShell";
+import { AdminDesktopShell } from "@/components/AdminDesktopShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoles } from "@/hooks/useRoles";
 import { areasPara, rotuloArea, rotuloFuncao } from "@/lib/permissions";
-import {
-  kwanza,
-  pagamentosAdmin,
-  parceiros,
-  ticketsSuporte,
-  utilizacaoSemanal,
-  utilizadores,
-} from "@/lib/mock-data";
+import { loadAdminData, updatePartnerStatus, updateUserActive } from "@/lib/admin-data";
+import { supabase } from "@/lib/supabase";
+import { kwanza, pagamentosAdmin, parceiros, reservas, ticketsSuporte, utilizacaoSemanal, utilizadores, viaturas } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/admin")({
-  head: () => ({
-    meta: [
-      { title: "Dashboard do gestor — Kubuka" },
-      {
-        name: "description",
-        content:
-          "Painel de administração Kubuka: utilizadores, aprovação de parceiros, estatísticas, pagamentos, comissões e suporte.",
-      },
-      { property: "og:title", content: "Dashboard do gestor — Kubuka" },
-      { property: "og:description", content: "Gestão global da plataforma de aluguer de viaturas em Angola." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AdminPage,
-});
-
-function AdminPage() {
-  return (
-    <AdminGuard>
-      <Admin />
-    </AdminGuard>
-  );
-}
+export const Route = createFileRoute("/admin")({ head: () => ({ meta: [{ title: "Dashboard do gestor — Kubuka" }, { name: "description", content: "Painel de gestão do marketplace Kubuka." }] }), component: AdminPage });
+function AdminPage() { return <AdminGuard><Admin /></AdminGuard>; }
 
 function Admin() {
-  const { roles } = useRoles();
-  const pendentes = parceiros.filter((p) => p.estado === "Pendente");
-  const comissaoTotal = pagamentosAdmin.reduce((acc, p) => acc + p.comissao, 0);
-  const volume = pagamentosAdmin.reduce((acc, p) => acc + p.valor, 0);
-  const areas = areasPara(roles);
-  const isAdmin = roles.includes("admin");
+  const { roles } = useRoles(); const isAdmin = roles.includes("admin"); const areas = areasPara(roles);
+  const [search, setSearch] = useState(""); const [status, setStatus] = useState("Todos"); const [activeTab, setActiveTab] = useState<string>(areas[0] ?? "estatisticas");
+  const [approved, setApproved] = useState<string[]>([]); const [blocked, setBlocked] = useState<string[]>([]);
+  const [dbReservations, setDbReservations] = useState<any[]>([]); const [dbPartners, setDbPartners] = useState<any[]>([]); const [dbUserStatus, setDbUserStatus] = useState<any[]>([]); const [dbLoading, setDbLoading] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setDbLoading(true);
+      const data = await loadAdminData();
+      if (mounted && !data.error) {
+        setDbReservations(data.reservations);
+        setDbPartners(data.partners);
+        setDbUserStatus(data.userStatus);
+      }
+      if (mounted) setDbLoading(false);
+    }
+    void load();
+    if (!supabase) return () => { mounted = false; };
+    const channel = supabase.channel("admin-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_reservations" }, () => void load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_partners" }, () => void load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_user_status" }, () => void load())
+      .subscribe();
+    return () => { mounted = false; void supabase.removeChannel(channel); };
+  }, []);
+  const liveReservations = dbReservations.length ? dbReservations.map((r) => ({ id: r.id, viaturaId: r.vehicle_id, cliente: r.client_name, periodo: r.period, total: Number(r.total || 0), commission: Number(r.commission || 0), estado: r.status, metodo: r.payment_method })) : reservas;
+  const livePartners = dbPartners.length ? dbPartners.map((p) => ({ id: p.id, nome: p.name, nif: p.nif, zona: p.zone, frota: p.fleet, estado: p.status, plano: p.plan })) : parceiros;
+  const liveUsers = utilizadores.map((u) => {
+    const state = dbUserStatus.find((s) => s.user_id === u.id);
+    return state ? { ...u, activo: state.active } : u;
+  });
+  const pendentes = livePartners.filter((p) => p.estado === "Pendente"); const volume = liveReservations.reduce((a, p) => a + Number(p.total || 0), 0); const comissaoTotal = liveReservations.reduce((a, p) => a + Number(p.commission ?? Number(p.total || 0) * 0.12), 0);
+  const filtradas = useMemo(() => liveReservations.filter((r) => { const text = `${r.id} ${r.cliente} ${r.viaturaId}`.toLowerCase(); return (!search || text.includes(search.toLowerCase())) && (status === "Todos" || r.estado === status); }), [search, status]);
+  const aprovar = async (id: string, nome: string) => { try { await updatePartnerStatus(id, "Aprovado"); setApproved((v) => [...new Set([...v, id])]); toast.success(nome + " aprovado com sucesso"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível aprovar."); } };
+  const bloquear = async (id: string, nome: string) => { const user = liveUsers.find((u) => u.id === id); const blockedNow = blocked.includes(id) || user?.activo === false; try { await updateUserActive(id, !blockedNow); setBlocked((v) => !blockedNow ? [...v, id] : v.filter((x) => x !== id)); toast.success(nome + " actualizado"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível actualizar."); } };
 
-  return (
-    <AdminShell>
-      <header className="px-5 pt-8">
-        <p className="flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5 text-accent" /> Administração
-        </p>
-        <h1 className="text-2xl">Dashboard do gestor</h1>
-        <div className="mt-2 flex flex-wrap gap-1">
-          {roles.map((r) => (
-            <Badge key={r} variant="secondary">
-              {rotuloFuncao[r]}
-            </Badge>
-          ))}
-        </div>
-        {isAdmin && (
-          <Button asChild variant="secondary" className="mt-3 w-full rounded-xl">
-            <Link to="/admin-funcoes">
-              <ShieldCheck className="mr-1 h-4 w-4" /> Gerir funções e permissões
-            </Link>
-          </Button>
-        )}
-      </header>
-
-      <div className="mt-4 grid grid-cols-3 gap-2 px-5">
-        <Kpi rotulo="Utilizadores" valor={`${utilizadores.length}`} />
-        <Kpi rotulo="Parceiros" valor={`${parceiros.length}`} />
-        <Kpi rotulo="Pendentes" valor={`${pendentes.length}`} />
-      </div>
-
-      <Tabs defaultValue={areas[0]!} className="mt-5 px-5">
-        <TabsList
-          className="grid w-full rounded-2xl"
-          style={{ gridTemplateColumns: `repeat(${areas.length}, minmax(0, 1fr))` }}
-        >
-          {areas.map((a) => (
-            <TabsTrigger key={a} value={a} className="rounded-xl text-[11px]">
-              {rotuloArea[a]}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {areas.includes("estatisticas") && (
-        <TabsContent value="estatisticas" className="mt-4 space-y-4">
-          <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="text-sm">Reservas por dia (semana actual)</h2>
-            <div className="mt-4 h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={utilizacaoSemanal}>
-                  <XAxis dataKey="dia" stroke="currentColor" fontSize={11} tickLine={false} axisLine={false} />
-                  <Area
-                    dataKey="reservas"
-                    stroke="var(--color-chart-1)"
-                    fill="var(--color-chart-1)"
-                    fillOpacity={0.25}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </section>
-
-          <section className="grid grid-cols-2 gap-2">
-            <Kpi rotulo="Volume transaccionado" valor={kwanza(volume)} />
-            <Kpi rotulo="Comissões" valor={kwanza(comissaoTotal)} />
-            <Kpi rotulo="Taxa de conversão" valor="34%" />
-            <Kpi rotulo="Avaliação média" valor="4.7" />
-          </section>
-        </TabsContent>
-        )}
-
-        {areas.includes("suporte") && (
-        <TabsContent value="suporte" className="mt-4 space-y-4">
-          <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="flex items-center gap-2 text-sm">
-              <Headphones className="h-4 w-4 text-accent" /> Suporte ao cliente
-            </h2>
-            <ul className="mt-3 space-y-3">
-              {ticketsSuporte.map((t) => (
-                <li key={t.id} className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm">{t.assunto}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t.id} · {t.utilizador} · prioridade {t.prioridade}
-                    </p>
-                  </div>
-                  <Badge variant={t.estado === "Resolvido" ? "default" : "secondary"}>{t.estado}</Badge>
-                </li>
-              ))}
-            </ul>
-            <Button variant="secondary" className="mt-4 w-full rounded-xl" onClick={() => toast("Abrindo caixa de suporte")}>
-              Abrir centro de suporte
-            </Button>
-          </section>
-        </TabsContent>
-        )}
-
-        {areas.includes("parceiros") && (
-        <TabsContent value="parceiros" className="mt-4 space-y-3">
-          {parceiros.map((p) => (
-            <article key={p.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <h2 className="truncate text-sm">{p.nome}</h2>
-                  <p className="text-xs text-muted-foreground">
-                    NIF {p.nif} · {p.zona} · {p.frota} viaturas
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">Plano {p.plano}</p>
-                </div>
-                <Badge variant={p.estado === "Aprovado" ? "default" : "secondary"}>{p.estado}</Badge>
-              </div>
-              {!isAdmin ? (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Apenas gestores podem aprovar ou suspender parceiros.
-                </p>
-              ) : p.estado === "Pendente" ? (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button className="rounded-xl" onClick={() => toast.success(`${p.nome} aprovado`)}>
-                    <Check className="mr-1 h-4 w-4" /> Aprovar
-                  </Button>
-                  <Button variant="secondary" className="rounded-xl" onClick={() => toast(`${p.nome} rejeitado`)}>
-                    <X className="mr-1 h-4 w-4" /> Rejeitar
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="secondary"
-                  className="mt-3 w-full rounded-xl"
-                  onClick={() =>
-                    toast(p.estado === "Suspenso" ? `${p.nome} reactivado` : `${p.nome} suspenso`)
-                  }
-                >
-                  <Ban className="mr-1 h-4 w-4" /> {p.estado === "Suspenso" ? "Reactivar" : "Suspender"}
-                </Button>
-              )}
-            </article>
-          ))}
-        </TabsContent>
-        )}
-
-        {areas.includes("utilizadores") && (
-        <TabsContent value="utilizadores" className="mt-4 space-y-3">
-          {utilizadores.map((u) => (
-            <article key={u.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-card p-4">
-              <div className="min-w-0">
-                <h2 className="flex items-center gap-2 truncate text-sm">
-                  <Users className="h-4 w-4 text-accent" /> {u.nome}
-                </h2>
-                <p className="truncate text-xs text-muted-foreground">{u.email}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {u.tipo} · {u.reservas} reservas · {u.verificado ? "verificado" : "por verificar"}
-                </p>
-              </div>
-              {isAdmin ? (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="rounded-xl"
-                  onClick={() => toast(u.activo ? `${u.nome} bloqueado` : `${u.nome} reactivado`)}
-                >
-                  {u.activo ? "Bloquear" : "Reactivar"}
-                </Button>
-              ) : (
-                <Badge variant="secondary">{u.activo ? "Activo" : "Bloqueado"}</Badge>
-              )}
-            </article>
-          ))}
-        </TabsContent>
-        )}
-
-        {areas.includes("pagamentos") && (
-        <TabsContent value="pagamentos" className="mt-4 space-y-3">
-          <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="flex items-center gap-2 text-sm">
-              <CircleDollarSign className="h-4 w-4 text-accent" /> Comissões acumuladas
-            </h2>
-            <p className="mt-1 font-display text-2xl text-accent">{kwanza(comissaoTotal)}</p>
-            <p className="text-xs text-muted-foreground">12% sobre {kwanza(volume)} transaccionados</p>
-          </section>
-
-          {pagamentosAdmin.map((p) => (
-            <article key={p.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-sm">{p.id}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {p.origem} · {p.metodo}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">Comissão {kwanza(p.comissao)}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-display text-accent">{kwanza(p.valor)}</p>
-                  <Badge variant={p.estado === "Liquidado" ? "default" : "secondary"}>{p.estado}</Badge>
-                </div>
-              </div>
-            </article>
-          ))}
-        </TabsContent>
-        )}
-      </Tabs>
-    </AdminShell>
-  );
+  return <AdminDesktopShell><div className="px-4 py-6 lg:px-8 lg:py-7">
+    <header className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-accent"><ShieldCheck className="h-3.5 w-3.5" /> Administração</p><h1 className="mt-1 font-display text-2xl lg:text-3xl">Dashboard</h1><p className="mt-1 text-xs text-muted-foreground">Resumo operacional do marketplace.{dbLoading ? " A sincronizar…" : supabase ? " Ligado ao Supabase." : ""}</p><div className="mt-2 flex gap-1">{roles.map((r) => <Badge key={r} variant="secondary">{rotuloFuncao[r]}</Badge>)}</div></div>{isAdmin && <Button asChild className="rounded-xl"><Link to="/admin-funcoes"><ShieldCheck className="mr-2 h-4 w-4" /> Funções e permissões</Link></Button>}</header>
+    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Kpi title="Viaturas" value={`${viaturas.length}`} detail={`${viaturas.filter((v) => v.disponivel).length} disponíveis`} icon={<CarFront className="h-5 w-5" />} /><Kpi title="Reservas" value={`${liveReservations.length}`} detail={`${liveReservations.filter((r) => r.estado === "Pendente").length} pendentes`} icon={<CircleDollarSign className="h-5 w-5" />} /><Kpi title="Utilizadores" value={`${liveUsers.length}`} detail={`${liveUsers.filter((u) => u.verificado).length} verificados`} icon={<Users className="h-5 w-5" />} /><Kpi title="Receita" value={kwanza(volume)} detail={`Comissão ${kwanza(comissaoTotal)}`} icon={<ArrowUpRight className="h-5 w-5" />} /></section>
+    <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_330px]"><Panel title="Receita de aluguer" subtitle="Evolução das reservas"><div className="h-56"><ResponsiveContainer width="100%" height="100%"><AreaChart data={utilizacaoSemanal}><XAxis dataKey="dia" stroke="currentColor" fontSize={11} tickLine={false} axisLine={false} /><Tooltip /><Area dataKey="reservas" stroke="var(--color-chart-1)" fill="var(--color-chart-1)" fillOpacity={0.2} strokeWidth={2} /></AreaChart></ResponsiveContainer></div></Panel><Panel title="Pendências" subtitle="Acções rápidas"><div className="space-y-2"><QuickAction href="/admin-anuncios" icon={<CarFront className="h-4 w-4" />} title="Aprovar anúncios" value={`${pendentes.length} pendentes`} /><QuickAction href="/admin-documentos" icon={<FileCheck2 className="h-4 w-4" />} title="Verificar documentos" value="Abrir fila" /><QuickAction href="/admin-categorias" icon={<ShieldCheck className="h-4 w-4" />} title="Gerir categorias" value="Catálogo" /></div></Panel></div>
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6"><TabsList className="grid w-full max-w-3xl rounded-xl" style={{ gridTemplateColumns: `repeat(${areas.length}, minmax(0, 1fr))` }}>{areas.map((a) => <TabsTrigger key={a} value={a} className="rounded-lg text-[11px]">{rotuloArea[a]}</TabsTrigger>)}</TabsList>
+      {areas.includes("estatisticas") && <TabsContent value="estatisticas" className="mt-4"><div className="grid gap-4 lg:grid-cols-3"><Panel title="Aluguéis recentes" className="lg:col-span-2"><div className="overflow-x-auto"><table className="w-full text-left text-xs"><thead className="text-muted-foreground"><tr><th className="pb-3">Reserva</th><th>Cliente</th><th>Viatura</th><th>Valor</th><th>Estado</th></tr></thead><tbody>{liveReservations.map((r) => { const v = viaturas.find((x) => x.id === r.viaturaId); return <tr key={r.id} className="border-t border-border/70"><td className="py-3 font-medium">{r.id}</td><td>{r.cliente}</td><td>{v ? `${v.marca} ${v.modelo}` : r.viaturaId}</td><td>{kwanza(r.total)}</td><td><Badge variant={r.estado === "Concluída" ? "default" : "secondary"}>{r.estado}</Badge></td></tr>; })}</tbody></table></div></Panel><Panel title="Resumo"><div className="space-y-4">{[["Disponíveis", viaturas.filter((v) => v.disponivel).length], ["Reservas pendentes", reservas.filter((r) => r.estado === "Pendente").length], ["Empresas pendentes", pendentes.length], ["Tickets abertos", ticketsSuporte.filter((t) => t.estado !== "Resolvido").length]].map(([label, value]) => <div key={label as string} className="flex items-center justify-between border-b border-border/70 pb-3 text-sm"><span className="text-muted-foreground">{label}</span><span className="font-semibold">{value}</span></div>)}</div></Panel></div></TabsContent>}
+      {areas.includes("reservas") && <TabsContent value="reservas" className="mt-4"><Panel title="Gestão de reservas"><div className="mb-4 grid gap-2 md:grid-cols-[1fr_180px]"><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar reserva, cliente ou veículo..." className="rounded-xl" /><select value={status} onChange={(e) => setStatus(e.target.value)} className="h-10 rounded-xl border border-input bg-background px-3 text-sm"><option>Todos</option><option>Pendente</option><option>Confirmada</option><option>Em curso</option><option>Concluída</option></select></div><div className="overflow-x-auto"><table className="w-full min-w-[720px] text-left text-xs"><thead className="text-muted-foreground"><tr><th className="pb-3">Nº</th><th>Cliente</th><th>Veículo</th><th>Período</th><th>Valor</th><th>Comissão</th><th>Estado</th></tr></thead><tbody>{filtradas.map((r) => { const v = viaturas.find((x) => x.id === r.viaturaId); const commission = Math.round(r.total * 0.12); return <tr key={r.id} className="border-t border-border/70"><td className="py-3 font-semibold">{r.id}</td><td>{r.cliente}</td><td>{v ? `${v.marca} ${v.modelo}` : r.viaturaId}</td><td>{r.periodo}</td><td>{kwanza(r.total)}</td><td className="text-accent">{kwanza(commission)}</td><td><Badge variant={r.estado === "Concluída" ? "default" : "secondary"}>{r.estado}</Badge></td></tr>; })}</tbody></table></div></Panel></TabsContent>}
+      {areas.includes("parceiros") && <TabsContent value="parceiros" className="mt-4"><div className="grid gap-3 lg:grid-cols-2">{livePartners.map((p) => { const done = approved.includes(p.id); return <Panel key={p.id} title={p.nome} action={<Badge variant={p.estado === "Aprovado" || done ? "default" : "secondary"}>{done ? "Aprovado" : p.estado}</Badge>}><p className="text-xs text-muted-foreground">NIF {p.nif} · {p.zona} · {p.frota} viaturas · Plano {p.plano}</p>{isAdmin && p.estado === "Pendente" && !done && <div className="mt-4 grid grid-cols-2 gap-2"><Button className="rounded-xl" onClick={() => aprovar(p.id, p.nome)}><Check className="mr-1 h-4 w-4" /> Aprovar</Button><Button variant="secondary" className="rounded-xl" onClick={() => toast(`${p.nome} enviado para revisão`)}><X className="mr-1 h-4 w-4" /> Rejeitar</Button></div>}</Panel>; })}</div></TabsContent>}
+      {areas.includes("utilizadores") && <TabsContent value="utilizadores" className="mt-4"><Panel title="Utilizadores"><div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left text-xs"><thead className="text-muted-foreground"><tr><th className="pb-3">Nome</th><th>Email</th><th>Tipo</th><th>Reservas</th><th>Verificação</th><th>Estado</th><th></th></tr></thead><tbody>{liveUsers.map((u) => { const isBlocked = blocked.includes(u.id) || !u.activo; return <tr key={u.id} className="border-t border-border/70"><td className="py-3 font-medium">{u.nome}</td><td>{u.email}</td><td>{u.tipo}</td><td>{u.reservas}</td><td>{u.verificado ? "Verificado" : "Pendente"}</td><td><Badge variant={isBlocked ? "destructive" : "default"}>{isBlocked ? "Bloqueado" : "Activo"}</Badge></td><td><Button size="sm" variant="secondary" className="rounded-lg" onClick={() => bloquear(u.id, u.nome)}>{isBlocked ? "Reactivar" : "Bloquear"}</Button></td></tr>; })}</tbody></table></div></Panel></TabsContent>}
+      {areas.includes("pagamentos") && <TabsContent value="pagamentos" className="mt-4"><div className="grid gap-4 lg:grid-cols-3"><Panel title="Comissões acumuladas"><p className="font-display text-3xl text-accent">{kwanza(comissaoTotal)}</p><p className="mt-1 text-xs text-muted-foreground">12% sobre {kwanza(volume)} transaccionados</p></Panel><Panel title="Pagamentos recentes" className="lg:col-span-2">{pagamentosAdmin.map((p) => <div key={p.id} className="flex items-center justify-between border-b border-border/70 py-3 text-xs last:border-0"><div><p className="font-medium">{p.id} · {p.origem}</p><p className="text-muted-foreground">{p.metodo}</p></div><div className="text-right"><p className="font-semibold">{kwanza(p.valor)}</p><Badge variant={p.estado === "Liquidado" ? "default" : "secondary"}>{p.estado}</Badge></div></div>)}</Panel></div></TabsContent>}
+      {areas.includes("suporte") && <TabsContent value="suporte" className="mt-4"><Panel title="Suporte ao cliente"><div className="space-y-3">{ticketsSuporte.map((t) => <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-border/70 p-3"><div className="min-w-0"><p className="truncate text-sm font-medium">{t.assunto}</p><p className="text-xs text-muted-foreground">{t.id} · {t.utilizador} · prioridade {t.prioridade}</p></div><Badge variant={t.estado === "Resolvido" ? "default" : "secondary"}>{t.estado}</Badge></div>)}</div><Button variant="secondary" className="mt-4 rounded-xl" onClick={() => toast("Centro de suporte aberto")}><Headphones className="mr-2 h-4 w-4" /> Abrir centro de suporte</Button></Panel></TabsContent>}
+    </Tabs>
+  </div></AdminDesktopShell>;
 }
-
-function Kpi({ rotulo, valor }: { rotulo: string; valor: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-3 text-center">
-      <p className="font-display text-lg text-accent">{valor}</p>
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{rotulo}</p>
-    </div>
-  );
-}
+function Kpi({ title, value, detail, icon }: { title: string; value: string; detail: string; icon: React.ReactNode }) { return <div className="rounded-2xl border border-border/80 bg-card p-4 lg:p-5"><div className="flex items-center justify-between"><p className="text-xs text-muted-foreground">{title}</p><span className="text-accent">{icon}</span></div><p className="mt-3 font-display text-2xl">{value}</p><p className="mt-1 text-[11px] text-muted-foreground">{detail}</p></div>; }
+function Panel({ title, subtitle, action, className = "", children }: { title: string; subtitle?: string; action?: React.ReactNode; className?: string; children: React.ReactNode }) { return <section className={`rounded-2xl border border-border/80 bg-card p-4 lg:p-5 ${className}`}><div className="mb-4 flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">{title}</h2>{subtitle && <p className="mt-0.5 text-[11px] text-muted-foreground">{subtitle}</p>}</div>{action}</div>{children}</section>; }
+function QuickAction({ href, icon, title, value }: { href: "/admin-anuncios" | "/admin-documentos" | "/admin-categorias"; icon: React.ReactNode; title: string; value: string }) { return <Link to={href} className="flex items-center gap-3 rounded-xl border border-border/70 p-3 transition hover:border-accent/50 hover:bg-secondary/40"><span className="text-accent">{icon}</span><span className="min-w-0 flex-1"><span className="block text-xs font-medium">{title}</span><span className="block text-[11px] text-muted-foreground">{value}</span></span><ArrowUpRight className="h-4 w-4 text-muted-foreground" /></Link>; }
