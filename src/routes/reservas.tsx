@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { CalendarPlus, Check, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -86,17 +87,28 @@ function Reservas() {
 
 function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
   const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
   async function actualizar(patch: Partial<Reserva>, ok: string) {
-    const { error } = await supabase.from("reservas").update(patch).eq("id", r.id);
-    if (error) { toast.error(error.message); return; }
+    if (busy) return;
+    setBusy(true);
+    const { data, error } = await supabase.from("reservas").update(patch).eq("id", r.id).select("id").maybeSingle();
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (!data) {
+      toast.error("A reserva não foi alterada. Verifique a sua sessão ou o estado da reserva.");
+      return;
+    }
     toast.success(ok);
-    qc.invalidateQueries({ queryKey: ["reservas"] });
+    await qc.invalidateQueries({ queryKey: ["reservas"] });
   }
   function estender() {
     const dia = 24 * 3600_000;
     const dur = new Date(r.fim).getTime() - new Date(r.inicio).getTime();
     const porDia = Number(r.total) / Math.max(1, dur / dia);
-    const total = Math.round(Number(r.total) + porDia);
+    const total = Math.round((Number(r.total) + porDia) * 100) / 100;
     void actualizar({ fim: new Date(new Date(r.fim).getTime() + dia).toISOString(), total, comissao: Math.round(total * 0.15) }, "Aluguer estendido por mais 1 dia");
   }
   const fmt = (d: string) => new Date(d).toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -117,8 +129,8 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
       </div>
       {papel === "cliente" && (r.estado === "pendente" || r.estado === "confirmada" || r.estado === "em_utilizacao") && (
         <div className="grid grid-cols-2 gap-2 border-t border-border p-3">
-          {r.estado !== "pendente" ? <Button variant="secondary" className="rounded-xl" onClick={estender}><CalendarPlus className="mr-1 h-4 w-4" /> Estender 1 dia</Button> : <span />}
-          {r.estado !== "em_utilizacao" && <Button variant="secondary" className="rounded-xl" onClick={() => actualizar({ estado: "cancelada" }, "Reserva cancelada")}><X className="mr-1 h-4 w-4" /> Cancelar</Button>}
+          {r.estado !== "pendente" ? <Button variant="secondary" className="rounded-xl" disabled={busy} onClick={estender}><CalendarPlus className="mr-1 h-4 w-4" /> Estender 1 dia</Button> : <span />}
+          {r.estado !== "em_utilizacao" && <Button variant="secondary" className="rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "cancelada" }, "Reserva cancelada")}><X className="mr-1 h-4 w-4" /> Cancelar</Button>}
         </div>
       )}
       {papel === "cliente" && r.estado === "concluida" && (
@@ -126,7 +138,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
           <span className="text-xs text-muted-foreground">{r.avaliacao ? "A sua avaliação" : "Avalie a experiência"}</span>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
-              <button key={n} aria-label={`Dar ${n} estrelas`} onClick={() => actualizar({ avaliacao: n }, `Obrigado pela avaliação de ${n} estrelas!`)}>
+              <button key={n} aria-label={`Dar ${n} estrelas`} disabled={busy || r.avaliacao != null} onClick={() => actualizar({ avaliacao: n }, `Obrigado pela avaliação de ${n} estrelas!`)}>
                 <Star className={`h-5 w-5 ${n <= (r.avaliacao ?? 0) ? "fill-accent text-accent" : "text-muted-foreground"}`} />
               </button>
             ))}
@@ -135,15 +147,15 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
       )}
       {papel === "fornecedor" && r.estado === "pendente" && (
         <div className="grid grid-cols-2 gap-2 border-t border-border p-3">
-          <Button className="rounded-xl" onClick={() => actualizar({ estado: "confirmada" }, "Reserva aprovada")}><Check className="mr-1 h-4 w-4" /> Aprovar</Button>
-          <Button variant="secondary" className="rounded-xl" onClick={() => actualizar({ estado: "rejeitada" }, "Reserva rejeitada")}><X className="mr-1 h-4 w-4" /> Rejeitar</Button>
+          <Button className="rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "confirmada" }, "Reserva aprovada")}><Check className="mr-1 h-4 w-4" /> Aprovar</Button>
+          <Button variant="secondary" className="rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "rejeitada" }, "Reserva rejeitada")}><X className="mr-1 h-4 w-4" /> Rejeitar</Button>
         </div>
       )}
       {papel === "fornecedor" && r.estado === "confirmada" && (
-        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" onClick={() => actualizar({ estado: "em_utilizacao" }, "Marcada em utilização")}>Marcar "Em utilização"</Button></div>
+        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao" }, "Marcada em utilização")}>Marcar "Em utilização"</Button></div>
       )}
       {papel === "fornecedor" && r.estado === "em_utilizacao" && (
-        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" onClick={() => actualizar({ estado: "concluida" }, "Reserva concluída")}>Marcar "Concluída"</Button></div>
+        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "concluida" }, "Reserva concluída")}>Marcar "Concluída"</Button></div>
       )}
     </article>
   );
