@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, ChevronRight, Star } from "lucide-react";
+import { Search, ChevronRight, Star, Phone } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
@@ -145,6 +145,18 @@ function Inicio() {
           <span className="flex-1">Ver todos os anúncios publicados</span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Link>
+
+        <a
+          href="tel:+244948848048"
+          className="mt-4 flex items-center gap-3 rounded-2xl border border-primary/30 bg-card p-4"
+        >
+          <Phone className="h-5 w-5 text-primary" />
+          <span className="flex-1">
+            <span className="block text-sm font-semibold">Reclamações e sugestões</span>
+            <span className="block text-xs text-muted-foreground">Ligue para 948 848 048</span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </a>
       </div>
     </AppShell>
   );
