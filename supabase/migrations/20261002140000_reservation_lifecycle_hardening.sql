@@ -12,6 +12,9 @@ declare
   is_admin boolean := private.has_role(auth.uid(), 'admin'::public.app_role);
   actor_is_provider boolean := auth.uid() = old.fornecedor_id;
   overlap_exists boolean;
+  ad_owner uuid;
+  ad_state public.anuncio_estado;
+  ad_available boolean;
   old_seconds numeric;
   delta_seconds numeric;
   expected_total numeric;
@@ -34,7 +37,7 @@ begin
     end if;
 
     select a.owner_id, a.estado, a.disponivel
-      into new.fornecedor_id, new.estado, new.extras
+      into ad_owner, ad_state, ad_available
       from public.anuncios a
       where a.id = new.anuncio_id
       for share;
@@ -42,6 +45,8 @@ begin
     if not found then
       raise exception 'Anúncio não encontrado';
     end if;
+
+    new.fornecedor_id := ad_owner;
 
     if new.estado <> 'pendente' then
       raise exception 'Uma nova reserva deve começar como pendente';
@@ -51,13 +56,9 @@ begin
       raise exception 'O anúncio não pode ser reservado pelo próprio proprietário';
     end if;
 
-    if (select estado from public.anuncios where id = new.anuncio_id) <> 'aprovado'
-       or not (select disponivel from public.anuncios where id = new.anuncio_id) then
+    if ad_state <> 'aprovado' or not ad_available then
       raise exception 'Este anúncio não está disponível para reserva';
     end if;
-
-    -- Keep the caller's extras; the SELECT above only supplies ownership/state checks.
-    new.extras := coalesce((select r.extras from public.reservas r where false), new.extras);
 
     -- Serialize checks per vehicle so two simultaneous confirmations cannot overlap.
     perform pg_advisory_xact_lock(hashtext(new.anuncio_id::text));
