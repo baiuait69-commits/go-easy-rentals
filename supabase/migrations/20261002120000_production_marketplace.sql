@@ -88,3 +88,27 @@ drop trigger if exists reserva_criar_pagamento on public.reservas;
 create trigger reserva_criar_pagamento
 after insert on public.reservas
 for each row execute function public.criar_pagamento_reserva();
+
+
+insert into storage.buckets (id, name, public)
+values ('verificacao', 'verificacao', false)
+on conflict (id) do nothing;
+
+drop policy if exists "Utilizador envia documento" on storage.objects;
+create policy "Utilizador envia documento"
+on storage.objects for insert to authenticated
+with check (
+  bucket_id = 'verificacao'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists "Utilizador ve os seus documentos" on storage.objects;
+create policy "Utilizador ve os seus documentos"
+on storage.objects for select to authenticated
+using (
+  bucket_id = 'verificacao'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or private.has_role(auth.uid(), 'admin'::public.app_role)
+  )
+);
