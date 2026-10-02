@@ -42,7 +42,7 @@ export function ReservarDialog({ item, disabled, label = "Reservar" }: { item: I
   const [inicio, setInicio] = useState(local(amanha));
   const [fim, setFim] = useState(local(new Date(amanha.getTime() + 24 * HORA)));
   const [periodo, setPeriodo] = useState<(typeof periodos)[number]["id"]>("dia");
-  const [metodo, setMetodo] = useState(metodos[0]);
+  const [metodo, setMetodo] = useState<string>(metodos[0]!);
   const [aEnviar, setAEnviar] = useState(false);
 
   const disponiveis = periodos.filter((p) => p.id === "dia" || item.precos[p.id] != null);
