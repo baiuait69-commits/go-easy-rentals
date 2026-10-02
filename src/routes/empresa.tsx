@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis } from "recharts";
 import { Check, FileText, Percent, TrendingUp, X } from "lucide-react";
 import { toast } from "sonner";
