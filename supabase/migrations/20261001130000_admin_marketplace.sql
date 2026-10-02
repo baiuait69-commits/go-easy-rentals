@@ -59,5 +59,7 @@ create policy "admins can update partners"
 on public.admin_partners for update using (public.is_admin()) with check (public.is_admin());
 create policy "admins can read user status"
 on public.admin_user_status for select using (public.is_admin());
+create policy "admins can insert user status"
+on public.admin_user_status for insert with check (public.is_admin());
 create policy "admins can update user status"
 on public.admin_user_status for update using (public.is_admin()) with check (public.is_admin());
