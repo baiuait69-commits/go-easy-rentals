@@ -77,7 +77,15 @@ function AuthPage() {
       );
       return;
     }
-    const { data: funcoes } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const { data: funcoes, error: erroFuncoes } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id);
+    if (erroFuncoes) {
+      await supabase.auth.signOut();
+      toast.error("Não foi possível verificar as permissões da conta. Contacte o suporte.");
+      return;
+    }
     const roles = (funcoes ?? []).map((item) => item.role);
     toast.success("Bem-vindo de volta!");
     if (roles.includes("admin")) navigate({ to: "/admin", replace: true });
