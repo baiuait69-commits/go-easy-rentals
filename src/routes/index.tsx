@@ -36,6 +36,7 @@ function Inicio() {
     : [];
 
   const destaques = produtos.filter((p) => p.destaque);
+  const viaturas = produtos.filter((p) => p.ramo === "viaturas");
 
   return (
     <AppShell>
@@ -119,7 +120,45 @@ function Inicio() {
           </ul>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-3">
+        <div className="mt-5 flex items-center justify-between">
+          <h2 className="text-base">Viaturas</h2>
+          <Link to="/catalogo/$ramo" params={{ ramo: "viaturas" }} className="text-xs font-semibold text-primary">
+            Ver todas
+          </Link>
+        </div>
+        <ul className="mt-3 grid grid-cols-2 gap-3">
+          {viaturas.map((p) => (
+            <li key={p.id}>
+              <Link
+                to="/produto/$id"
+                params={{ id: p.id }}
+                className="block overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/50"
+              >
+                <div className="h-28 w-full overflow-hidden bg-secondary">
+                  {p.imagem ? (
+                    <img
+                      src={p.imagem}
+                      alt={p.nome}
+                      loading="lazy"
+                      width={320}
+                      height={160}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-3xl">{p.icone}</div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <p className="truncate text-sm font-semibold">{p.nome}</p>
+                  <p className="mt-1 truncate text-[11px] text-muted-foreground">{p.resumo}</p>
+                  <p className="mt-1 text-xs font-semibold text-primary">{kz(p.precoDia)}/dia</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-5 grid grid-cols-2 gap-3">
           {ramos.map((r) => (
             <Link
               key={r.slug}
@@ -152,7 +191,7 @@ function Inicio() {
         >
           <Phone className="h-5 w-5 text-primary" />
           <span className="flex-1">
-            <span className="block text-sm font-semibold">Reclamações e sugestões</span>
+            <span className="block text-sm font-semibold">Suporte Técnico</span>
             <span className="block text-xs text-muted-foreground">Ligue para 948 848 048</span>
           </span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
