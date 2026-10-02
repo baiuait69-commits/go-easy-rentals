@@ -8,23 +8,32 @@ export function useRoles() {
   const { user, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelado = false;
     if (authLoading) return;
     if (!user) {
       setRoles([]);
+      setError(null);
       setLoading(false);
       return;
     }
     setLoading(true);
+    setError(null);
     supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
-      .then(({ data }) => {
+      .then(({ data, error }) => {
         if (cancelado) return;
-        setRoles((data ?? []).map((r) => r.role as AppRole));
+        if (error) {
+          setRoles([]);
+          setError(error.message);
+        } else {
+          setRoles((data ?? []).map((r) => r.role as AppRole));
+          setError(null);
+        }
         setLoading(false);
       });
     return () => {
@@ -32,5 +41,5 @@ export function useRoles() {
     };
   }, [user, authLoading]);
 
-  return { roles, loading: loading || authLoading };
+  return { roles, loading: loading || authLoading, error };
 }
