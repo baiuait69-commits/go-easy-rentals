@@ -16,7 +16,7 @@ export type ItemReserva = {
   titulo: string;
   imagem?: string | null;
   local?: string | null;
-  precos: { hora?: number | null; dia: number; semana?: number | null; mes?: number | null };
+  precos: { hora?: number | null; dia: number | null; semana?: number | null; mes?: number | null };
   caucao: number;
 };
 
@@ -49,12 +49,12 @@ export function ReservarDialog({ item, disabled, label = "Reservar" }: { item: I
   const per = periodos.find((p) => p.id === periodo)!;
   const dur = new Date(fim).getTime() - new Date(inicio).getTime();
   const unidades = dur > 0 ? Math.ceil(dur / per.ms) : 0;
-  const total = unidades * Number(item.precos[periodo] ?? item.precos.dia);
+  const precoBase = item.precos[periodo] ?? item.precos.dia;\n  const total = unidades * Number(precoBase ?? 0);
   const comissao = Math.round(total * 0.15);
 
   async function confirmar() {
     if (!user) { navigate({ to: "/auth" }); return; }
-    if (dur <= 0) { toast.error("O fim tem de ser depois do início."); return; }
+    if (item.precos.dia == null) { toast.error("O proprietário ainda não definiu o preço."); return; }\n    if (dur <= 0) { toast.error("O fim tem de ser depois do início."); return; }
     setAEnviar(true);
     const { data, error } = await supabase.from("reservas").insert({
       anuncio_id: item.anuncioId ?? null, item_ref: item.ref, titulo: item.titulo, imagem: item.imagem ?? null,
