@@ -271,7 +271,7 @@ export const produtos: Produto[] = [
     resumo: "SUV Premium · 4x4",
     descricao: "Toyota Land Cruiser 300 — conforto, potência e segurança para qualquer terreno.",
     precoDia: 150000,
-    imagem: "/images/car-1.jpg",
+    imagem: "/images/vehicles/toyota-land-cruiser-300.svg",
     icone: "🚙",
     destaque: true,
     zona: "Talatona, Luanda",
@@ -292,7 +292,7 @@ export const produtos: Produto[] = [
     resumo: "SUV Premium · 4x4",
     descricao: "Range Rover Sport — luxo britânico com capacidade todo-o-terreno.",
     precoDia: 180000,
-    imagem: "/images/car-3.jpg",
+    imagem: "/images/vehicles/range-rover-sport.svg",
     icone: "🚙",
     zona: "Miramar, Luanda",
     fichas: [
@@ -312,7 +312,7 @@ export const produtos: Produto[] = [
     resumo: "SUV Premium · 4x4",
     descricao: "BMW X5 — desportividade e conforto premium para a cidade e estrada.",
     precoDia: 170000,
-    imagem: "/images/car-4.jpg",
+    imagem: "/images/vehicles/bmw-x5.svg",
     icone: "🚙",
     zona: "Talatona, Luanda",
     fichas: [
@@ -332,7 +332,7 @@ export const produtos: Produto[] = [
     resumo: "SUV Premium · 4x4",
     descricao: "Mercedes-Benz GLE — elegância, tecnologia e potência.",
     precoDia: 160000,
-    imagem: "/images/car-2.jpg",
+    imagem: "/images/vehicles/mercedes-gle.svg",
     icone: "🚙",
     zona: "Kilamba, Luanda",
     fichas: [
@@ -352,7 +352,7 @@ export const produtos: Produto[] = [
     resumo: "SUV · 4x4",
     descricao: "Prado — o clássico robusto para trabalho e família.",
     precoDia: 95000,
-    imagem: "/images/car-1.jpg",
+    imagem: "/images/vehicles/toyota-prado.svg",
     icone: "🚙",
     zona: "Talatona, Luanda",
     fichas: [
@@ -372,7 +372,7 @@ export const produtos: Produto[] = [
     resumo: "Pick-up · 4x4",
     descricao: "Hilux — pick-up de trabalho fiável em qualquer piso.",
     precoDia: 88000,
-    imagem: "/images/car-4.jpg",
+    imagem: "/images/vehicles/toyota-hilux.svg",
     icone: "🛻",
     zona: "Viana, Luanda",
     fichas: [
@@ -392,7 +392,7 @@ export const produtos: Produto[] = [
     resumo: "Sedan · Económico",
     descricao: "Corolla — económico, confortável e ideal para o dia-a-dia.",
     precoDia: 42000,
-    imagem: "/images/car-2.jpg",
+    imagem: "/images/vehicles/toyota-corolla.svg",
     icone: "🚗",
     zona: "Maianga, Luanda",
     fichas: [
@@ -412,7 +412,7 @@ export const produtos: Produto[] = [
     resumo: "Carrinha de carga · 8 m³",
     descricao: "Carrinha de carga para mercadoria e pequenas mudanças.",
     precoDia: 65000,
-    imagem: "/images/van-1.jpg",
+    imagem: "/images/vehicles/hyundai-h1.svg",
     icone: "🚚",
     zona: "Cazenga, Luanda",
     fichas: [
@@ -432,7 +432,7 @@ export const produtos: Produto[] = [
     resumo: "Mudanças · 18 m³",
     descricao: "Iveco Daily com caixa fechada, ideal para mudanças de casa.",
     precoDia: 110000,
-    imagem: "/images/van-2.jpg",
+    imagem: "/images/vehicles/iveco-daily.svg",
     icone: "📦",
     zona: "Viana, Luanda",
     fichas: [
