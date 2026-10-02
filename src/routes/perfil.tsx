@@ -118,9 +118,12 @@ function Perfil() {
           <Progress value={62} className="mt-3" />
         </section>
 
-        <Button variant="secondary" className="h-12 w-full rounded-2xl">
-          <Headphones className="mr-2 h-4 w-4" /> Falar com o suporte
-        </Button>
+        <a
+          href="tel:+244948848048"
+          className="flex h-12 w-full items-center justify-center rounded-2xl bg-secondary text-sm font-semibold transition-colors hover:bg-secondary/80"
+        >
+          <Headphones className="mr-2 h-4 w-4" /> Suporte Técnico · 948 848 048
+        </a>
       </div>
     </AppShell>
   );
