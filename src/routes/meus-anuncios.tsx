@@ -74,7 +74,7 @@ function MeusAnuncios() {
         categoria: form.categoria,
         subcategoria: form.subcategoria.trim() || "Geral",
         municipio: form.municipio,
-        preco_dia: Number(form.preco_dia || 0),
+        preco_dia: form.preco_dia ? Number(form.preco_dia) : null,
         caucao: Number(form.caucao || 0),
         descricao: form.descricao.trim() || null,
         imagem: form.imagem.trim() || null,
@@ -202,7 +202,7 @@ function MeusAnuncios() {
                 />
               </div>
               <div>
-                <Label htmlFor="preco">Preço / dia (Kz)</Label>
+                <Label htmlFor="preco">Preço / dia (Kz, definido por si)</Label>
                 <Input
                   id="preco"
                   inputMode="numeric"
@@ -280,7 +280,7 @@ function MeusAnuncios() {
                 </Badge>
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="font-display text-accent">{kz(a.preco_dia)} / dia</span>
+                <span className="font-display text-accent">{a.preco_dia != null ? `${kz(a.preco_dia)} / dia` : "Preço definido pelo proprietário"}</span>
                 <Button
                   size="sm"
                   variant="ghost"
