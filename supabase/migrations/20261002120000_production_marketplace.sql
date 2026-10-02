@@ -65,3 +65,26 @@ begin
     alter publication supabase_realtime add table public.pagamentos;
   end if;
 end $$;
+
+
+create or replace function public.criar_pagamento_reserva()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.pagamentos (
+    reserva_id, cliente_id, fornecedor_id, valor, comissao, metodo, referencia, estado
+  ) values (
+    new.id, new.cliente_id, new.fornecedor_id, new.total, coalesce(new.comissao, 0),
+    new.metodo_pagamento, new.numero, 'pendente'
+  );
+  return new;
+end;
+$$;
+
+drop trigger if exists reserva_criar_pagamento on public.reservas;
+create trigger reserva_criar_pagamento
+after insert on public.reservas
+for each row execute function public.criar_pagamento_reserva();
