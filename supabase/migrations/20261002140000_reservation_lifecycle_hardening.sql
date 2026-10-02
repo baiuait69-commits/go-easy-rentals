@@ -10,7 +10,7 @@ set search_path = public
 as $$
 declare
   is_admin boolean := private.has_role(auth.uid(), 'admin'::public.app_role);
-  actor_is_provider boolean := auth.uid() = old.fornecedor_id;
+  actor_is_provider boolean;
   overlap_exists boolean;
   ad_owner uuid;
   ad_state public.anuncio_estado;
@@ -78,6 +78,8 @@ begin
 
     return new;
   end if;
+
+  actor_is_provider := auth.uid() = old.fornecedor_id;
 
   -- Immutable identity and financial source fields for non-admin users.
   if new.cliente_id <> old.cliente_id
