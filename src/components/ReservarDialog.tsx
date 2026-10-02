@@ -59,7 +59,7 @@ export function ReservarDialog({ item, disabled, label = "Reservar" }: { item: I
     const { data, error } = await supabase.from("reservas").insert({
       anuncio_id: item.anuncioId ?? null, item_ref: item.ref, titulo: item.titulo, imagem: item.imagem ?? null,
       local: item.local ?? null, inicio: new Date(inicio).toISOString(), fim: new Date(fim).toISOString(),
-      total, caucao: item.caucao, comissao, metodo_pagamento: metodo, cliente_id: user.id,
+      total, caucao: item.caucao, metodo_pagamento: metodo, cliente_id: user.id,
       extras: { periodo, unidades },
     }).select("numero").single();
     setAEnviar(false);
