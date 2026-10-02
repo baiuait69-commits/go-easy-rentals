@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoles } from "@/hooks/useRoles";
 import { areasPara, rotuloArea, rotuloFuncao } from "@/lib/permissions";
 import { loadAdminData, updatePartnerStatus, updateUserActive } from "@/lib/admin-data";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { kwanza, pagamentosAdmin, parceiros, reservas, ticketsSuporte, utilizacaoSemanal, utilizadores, viaturas } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/admin")({ head: () => ({ meta: [{ title: "Dashboard do gestor — Kubuka" }, { name: "description", content: "Painel de gestão do marketplace Kubuka." }] }), component: AdminPage });
@@ -36,7 +36,7 @@ function Admin() {
       if (mounted) setDbLoading(false);
     }
     void load();
-    if (!supabase) return () => { mounted = false; };
+
     const channel = supabase.channel("admin-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_reservations" }, () => void load())
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_partners" }, () => void load())
