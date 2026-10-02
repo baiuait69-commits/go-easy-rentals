@@ -50,7 +50,7 @@ function Admin() {
     const state = dbUserStatus.find((s) => s.user_id === u.id);
     return state ? { ...u, activo: state.active } : u;
   });
-  const pendentes = livePartners.filter((p) => p.estado === "Pendente"); const volume = liveReservations.reduce((a, p) => a + Number(p.total || 0), 0); const comissaoTotal = liveReservations.reduce((a, p) => a + Number(p.commission ?? Number(p.total || 0) * 0.12), 0);
+  const pendentes = livePartners.filter((p) => p.estado === "Pendente"); const volume = liveReservations.reduce((a, p) => a + Number(p.total || 0), 0); const comissaoTotal = liveReservations.reduce((a, p) => a + Number((p as any).commission ?? Number(p.total || 0) * 0.12), 0);
   const filtradas = useMemo(() => liveReservations.filter((r) => { const text = `${r.id} ${r.cliente} ${r.viaturaId}`.toLowerCase(); return (!search || text.includes(search.toLowerCase())) && (status === "Todos" || r.estado === status); }), [search, status]);
   const aprovar = async (id: string, nome: string) => { try { await updatePartnerStatus(id, "Aprovado"); setApproved((v) => [...new Set([...v, id])]); toast.success(nome + " aprovado com sucesso"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível aprovar."); } };
   const bloquear = async (id: string, nome: string) => { const user = liveUsers.find((u) => u.id === id); const blockedNow = blocked.includes(id) || user?.activo === false; try { await updateUserActive(id, !blockedNow); setBlocked((v) => !blockedNow ? [...v, id] : v.filter((x) => x !== id)); toast.success(nome + " actualizado"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível actualizar."); } };
