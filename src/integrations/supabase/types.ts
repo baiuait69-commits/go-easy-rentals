@@ -136,6 +136,12 @@ export type Database = {
         }
         Relationships: []
       }
+      pagamentos: {
+        Row: { id: string; reserva_id: string | null; cliente_id: string; fornecedor_id: string | null; valor: number; comissao: number; metodo: string; referencia: string | null; estado: string; pago_em: string | null; created_at: string; updated_at: string },
+        Insert: { id?: string; reserva_id?: string | null; cliente_id: string; fornecedor_id?: string | null; valor: number; comissao?: number; metodo: string; referencia?: string | null; estado?: string; pago_em?: string | null; created_at?: string; updated_at?: string },
+        Update: { id?: string; reserva_id?: string | null; cliente_id?: string; fornecedor_id?: string | null; valor?: number; comissao?: number; metodo?: string; referencia?: string | null; estado?: string; pago_em?: string | null; created_at?: string; updated_at?: string },
+        Relationships: []
+      }
       perfis: {
         Row: {
           created_at: string
