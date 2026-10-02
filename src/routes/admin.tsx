@@ -28,7 +28,7 @@ function Admin() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("Todos");
   const [data, setData] = useState<any>({ reservations: [], ads: [], profiles: [], payments: [], userStatus: [] });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);\n  const [loadError, setLoadError] = useState<string | null>(null);
 
   async function reload() {
     setLoading(true);
@@ -86,7 +86,7 @@ function Admin() {
       {isAdmin && <Button asChild className="rounded-xl"><Link to="/admin-funcoes"><ShieldCheck className="mr-2 h-4 w-4" /> Funções e permissões</Link></Button>}
     </header>
 
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    {loadError && <div role="alert" className="mb-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm"><p className="font-semibold">Alguns dados não foram carregados</p><p className="mt-1 break-words text-muted-foreground">{loadError}</p><Button variant="outline" size="sm" className="mt-3 rounded-lg" onClick={() => void reload()}>Tentar novamente</Button></div>}\n\n    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <Kpi title="Anúncios" value={String(ads.length)} detail={`${activeAds.length} publicados · ${pendingAds.length} pendentes`} icon={<CarFront className="h-5 w-5" />} />
       <Kpi title="Reservas" value={String(reservations.length)} detail={`${reservations.filter((r: any) => r.estado === "pendente").length} pendentes`} icon={<CircleDollarSign className="h-5 w-5" />} />
       <Kpi title="Utilizadores" value={String(profiles.length)} detail={`${profiles.filter((p: any) => p.verificado).length} verificados`} icon={<Users className="h-5 w-5" />} />
