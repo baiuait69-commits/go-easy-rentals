@@ -109,7 +109,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
     const dur = new Date(r.fim).getTime() - new Date(r.inicio).getTime();
     const porDia = Number(r.total) / Math.max(1, dur / dia);
     const total = Math.round((Number(r.total) + porDia) * 100) / 100;
-    void actualizar({ fim: new Date(new Date(r.fim).getTime() + dia).toISOString(), total, comissao: Math.round(total * 0.15) }, "Aluguer estendido por mais 1 dia");
+    void actualizar({ fim: new Date(new Date(r.fim).getTime() + dia).toISOString(), total }, "Aluguer estendido por mais 1 dia");
   }
   const fmt = (d: string) => new Date(d).toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
