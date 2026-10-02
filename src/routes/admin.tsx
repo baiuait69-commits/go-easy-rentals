@@ -44,7 +44,7 @@ function Admin() {
       .subscribe();
     return () => { mounted = false; void supabase.removeChannel(channel); };
   }, []);
-  const liveReservations = dbReservations.length ? dbReservations : reservas;
+  const liveReservations = dbReservations.length ? dbReservations.map((r) => ({ id: r.id, viaturaId: r.vehicle_id, cliente: r.client_name, periodo: r.period, total: Number(r.total || 0), estado: r.status, metodo: r.payment_method })) : reservas;
   const livePartners = dbPartners.length ? dbPartners.map((p) => ({ id: p.id, nome: p.name, nif: p.nif, zona: p.zone, frota: p.fleet, estado: p.status, plano: p.plan })) : parceiros;
   const liveUsers = utilizadores.map((u) => {
     const state = dbUserStatus.find((s) => s.user_id === u.id);
