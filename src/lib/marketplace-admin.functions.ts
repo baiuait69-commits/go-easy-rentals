@@ -15,7 +15,17 @@ export const listarDocumentosPendentes = createServerFn({ method: "GET" })
     await garantirAdmin(context.supabase, context.userId);
     const { data, error } = await (context.supabase as any).from("documentos_verificacao").select("id, user_id, tipo, numero, ficheiro_url, estado, motivo_rejeicao, created_at, reviewed_at, perfis(nome, telefone)").order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const documentos = data ?? [];
+    return await Promise.all(documentos.map(async (documento: any) => {
+      const { data: ficheiro, error: erroFicheiro } = await context.supabase.storage
+        .from("verificacao")
+        .createSignedUrl(documento.ficheiro_url, 300);
+      return {
+        ...documento,
+        ficheiro_url: erroFicheiro ? null : ficheiro.signedUrl,
+        erro_ficheiro: erroFicheiro?.message ?? null,
+      };
+    }));
   });
 
 export const reverDocumento = createServerFn({ method: "POST" })
