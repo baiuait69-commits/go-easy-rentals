@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useRoles } from "@/hooks/useRoles";
 import logoAsset from "@/assets/teu-carro-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/auth")({
@@ -35,13 +36,23 @@ const credenciais = z.object({
 function AuthPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
+  const { roles, loading: rolesLoading } = useRoles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/", replace: true });
-  }, [loading, session, navigate]);
+    if (loading || rolesLoading || !session) return;
+    if (roles.includes("admin")) {
+      navigate({ to: "/admin", replace: true });
+      return;
+    }
+    if (roles.includes("empresa")) {
+      navigate({ to: "/empresa", replace: true });
+      return;
+    }
+    navigate({ to: "/", replace: true });
+  }, [loading, rolesLoading, session, roles, navigate]);
 
   const validar = () => {
     const parsed = credenciais.safeParse({ email, password });
@@ -56,7 +67,7 @@ function AuthPage() {
     const dados = validar();
     if (!dados) return;
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword(dados);
+    const { data, error } = await supabase.auth.signInWithPassword(dados);
     setBusy(false);
     if (error) {
       toast.error(
@@ -66,8 +77,12 @@ function AuthPage() {
       );
       return;
     }
+    const { data: funcoes } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const roles = (funcoes ?? []).map((item) => item.role);
     toast.success("Bem-vindo de volta!");
-    navigate({ to: "/", replace: true });
+    if (roles.includes("admin")) navigate({ to: "/admin", replace: true });
+    else if (roles.includes("empresa")) navigate({ to: "/empresa", replace: true });
+    else navigate({ to: "/", replace: true });
   }
 
   async function criarConta() {
@@ -85,7 +100,7 @@ function AuthPage() {
       return;
     }
     if (data.session) {
-      toast.success("Conta criada. Já está a usar a Kubuka!");
+      toast.success("Conta de cliente criada. Já está a usar a Kubuka!");
       navigate({ to: "/", replace: true });
       return;
     }
