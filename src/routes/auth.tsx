@@ -57,6 +57,7 @@ function AuthPage() {
     if (!dados) return;
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword(dados);
+    void registarTentativa(dados.email, "app", error?.message ?? null);
     setBusy(false);
     if (error) {
       toast.error(
