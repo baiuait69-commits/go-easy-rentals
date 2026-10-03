@@ -136,6 +136,60 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_tentativas: {
+        Row: {
+          created_at: string
+          email: string
+          erro: string | null
+          id: string
+          origem: string
+          sucesso: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          erro?: string | null
+          id?: string
+          origem?: string
+          sucesso: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          erro?: string | null
+          id?: string
+          origem?: string
+          sucesso?: boolean
+        }
+        Relationships: []
+      }
+      diagnosticos_acesso: {
+        Row: {
+          autor_id: string
+          created_at: string
+          descricao: string
+          email_alvo: string
+          id: string
+          resultado: Json
+        }
+        Insert: {
+          autor_id?: string
+          created_at?: string
+          descricao: string
+          email_alvo: string
+          id?: string
+          resultado: Json
+        }
+        Update: {
+          autor_id?: string
+          created_at?: string
+          descricao?: string
+          email_alvo?: string
+          id?: string
+          resultado?: Json
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           created_at: string

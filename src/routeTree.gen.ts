@@ -13,9 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
 import { Route as AdminCategoriasRouteImport } from './routes/admin-categorias'
+import { Route as AdminDiagnosticoRouteImport } from './routes/admin-diagnostico'
 import { Route as AdminDocumentosRouteImport } from './routes/admin-documentos'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
+import { Route as AdminReservasRouteImport } from './routes/admin-reservas'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
@@ -51,6 +53,11 @@ const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
   path: '/admin-categorias',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDiagnosticoRoute = AdminDiagnosticoRouteImport.update({
+  id: '/admin-diagnostico',
+  path: '/admin-diagnostico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDocumentosRoute = AdminDocumentosRouteImport.update({
   id: '/admin-documentos',
   path: '/admin-documentos',
@@ -64,6 +71,11 @@ const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin-login',
   path: '/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReservasRoute = AdminReservasRouteImport.update({
+  id: '/admin-reservas',
+  path: '/admin-reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -144,9 +156,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
+  '/admin-reservas': typeof AdminReservasRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/favoritos': typeof FavoritosRoute
@@ -167,9 +181,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
+  '/admin-reservas': typeof AdminReservasRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/favoritos': typeof FavoritosRoute
@@ -191,9 +207,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/admin-anuncios': typeof AdminAnunciosRoute
   '/admin-categorias': typeof AdminCategoriasRoute
+  '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
+  '/admin-reservas': typeof AdminReservasRoute
   '/auth': typeof AuthRoute
   '/empresa': typeof EmpresaRoute
   '/favoritos': typeof FavoritosRoute
@@ -216,9 +234,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-anuncios'
     | '/admin-categorias'
+    | '/admin-diagnostico'
     | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
+    | '/admin-reservas'
     | '/auth'
     | '/empresa'
     | '/favoritos'
@@ -239,9 +259,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-anuncios'
     | '/admin-categorias'
+    | '/admin-diagnostico'
     | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
+    | '/admin-reservas'
     | '/auth'
     | '/empresa'
     | '/favoritos'
@@ -262,9 +284,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-anuncios'
     | '/admin-categorias'
+    | '/admin-diagnostico'
     | '/admin-documentos'
     | '/admin-funcoes'
     | '/admin-login'
+    | '/admin-reservas'
     | '/auth'
     | '/empresa'
     | '/favoritos'
@@ -286,9 +310,11 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AdminAnunciosRoute: typeof AdminAnunciosRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
+  AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
   AdminDocumentosRoute: typeof AdminDocumentosRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminReservasRoute: typeof AdminReservasRoute
   AuthRoute: typeof AuthRoute
   EmpresaRoute: typeof EmpresaRoute
   FavoritosRoute: typeof FavoritosRoute
@@ -335,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-diagnostico': {
+      id: '/admin-diagnostico'
+      path: '/admin-diagnostico'
+      fullPath: '/admin-diagnostico'
+      preLoaderRoute: typeof AdminDiagnosticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin-documentos': {
       id: '/admin-documentos'
       path: '/admin-documentos'
@@ -354,6 +387,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-login'
       fullPath: '/admin-login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-reservas': {
+      id: '/admin-reservas'
+      path: '/admin-reservas'
+      fullPath: '/admin-reservas'
+      preLoaderRoute: typeof AdminReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -462,9 +502,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AdminAnunciosRoute: AdminAnunciosRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
+  AdminDiagnosticoRoute: AdminDiagnosticoRoute,
   AdminDocumentosRoute: AdminDocumentosRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminReservasRoute: AdminReservasRoute,
   AuthRoute: AuthRoute,
   EmpresaRoute: EmpresaRoute,
   FavoritosRoute: FavoritosRoute,

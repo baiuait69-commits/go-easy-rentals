@@ -118,16 +118,16 @@ function DetalheProduto() {
           <span className="font-display text-lg text-primary">{kz(total)}</span>
         </div>
 
-        <Button
-          className="mt-4 h-12 w-full rounded-2xl text-base"
-          onClick={() =>
-            toast.success("Pedido de reserva enviado", {
-              description: `${p.nome} · ${periodo.nome} · ${kz(total)}`,
-            })
-          }
-        >
-          Reservar agora
-        </Button>
+        <ReservarDialog
+          item={{
+            itemRef: `produto:${p.id}`,
+            titulo: p.nome,
+            imagem: p.imagem ?? null,
+            local: p.zona,
+            precos: { dia: p.precoDia },
+          }}
+          trigger={<Button className="mt-4 h-12 w-full rounded-2xl text-base">Reservar agora</Button>}
+        />
       </div>
     </AppShell>
   );

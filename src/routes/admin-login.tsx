@@ -59,6 +59,7 @@ function AdminLogin() {
     }
     setBusy(true);
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+    void registarTentativa(parsed.data.email, "admin", error?.message ?? null);
     if (error) {
       setBusy(false);
       toast.error(error.message.includes("Invalid login") ? "Email ou palavra-passe incorretos." : error.message);

@@ -1,3 +1,4 @@
+import { ReservarDialog } from "@/components/ReservarDialog";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPin, ShieldCheck, Truck, UserRound } from "lucide-react";
@@ -135,13 +136,23 @@ function DetalheAnuncio() {
           {anuncio.carga_m3 && <Ficha rotulo="Carga" valor={`${anuncio.carga_m3} m³`} />}
         </ul>
 
-        <Button
-          className="h-14 w-full rounded-2xl text-base"
+        <ReservarDialog
           disabled={!anuncio.disponivel}
-          onClick={() => toast.success("Pedido de reserva enviado ao fornecedor.")}
-        >
-          Pedir reserva
-        </Button>
+          item={{
+            anuncioId: anuncio.id,
+            itemRef: `anuncio:${anuncio.id}`,
+            titulo: anuncio.titulo,
+            imagem: anuncio.imagem,
+            local: anuncio.municipio,
+            caucao: Number(anuncio.caucao),
+            precos: { hora: anuncio.preco_hora, dia: Number(anuncio.preco_dia), semana: anuncio.preco_semana, mes: anuncio.preco_mes },
+          }}
+          trigger={
+            <Button className="h-14 w-full rounded-2xl text-base" disabled={!anuncio.disponivel}>
+              Pedir reserva
+            </Button>
+          }
+        />
       </div>
     </AppShell>
   );
