@@ -257,20 +257,23 @@ function Detalhe() {
             <span className="rounded-lg bg-secondary px-3 py-2 text-center">Multicaixa Express</span>
             <span className="rounded-lg bg-secondary px-3 py-2 text-center">Cartão / Transferência</span>
           </div>
-          <Button
-            className="mt-4 h-12 w-full rounded-2xl text-base"
+          <ReservarDialog
             disabled={!viatura.disponivel || cargaExcede}
-            onClick={() => {
-              toast.success("Reserva enviada à empresa", {
-                description: isCarrinha
-                  ? `${tipoCarga === "mudanca" ? "Mudança de casa" : "Mercadoria"} · ${cargaM3} m³${motorista ? " · com motorista" : ""}. Confirmação em tempo real.`
-                  : "Vai receber a confirmação em tempo real.",
-              });
-              navigate({ to: "/reservas" });
+            item={{
+              itemRef: `viatura:${viatura.id}`,
+              titulo: `${viatura.marca} ${viatura.modelo}`,
+              imagem: viatura.imagem,
+              local: viatura.zona,
+              precos: { hora: viatura.precoHora, dia: viatura.precoDia },
+              extrasValor: total - base,
+              extras: { motorista, entrega, seguro, ...(isCarrinha ? { tipoCarga, cargaM3, ajudantes } : {}) },
             }}
-          >
-            {!viatura.disponivel ? "Indisponível hoje" : cargaExcede ? "Volume excede a capacidade" : "Reservar agora"}
-          </Button>
+            trigger={
+              <Button className="mt-4 h-12 w-full rounded-2xl text-base" disabled={!viatura.disponivel || cargaExcede}>
+                {!viatura.disponivel ? "Indisponível hoje" : cargaExcede ? "Volume excede a capacidade" : "Reservar agora"}
+              </Button>
+            }
+          />
         </div>
       </div>
     </AppShell>

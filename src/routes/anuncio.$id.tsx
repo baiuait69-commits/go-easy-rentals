@@ -1,3 +1,4 @@
+import { ReservarDialog } from "@/components/ReservarDialog";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPin, ShieldCheck, Truck, UserRound } from "lucide-react";
