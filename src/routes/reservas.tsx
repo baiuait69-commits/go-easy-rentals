@@ -103,7 +103,7 @@ function Cartao({ r, modo }: { r: Reserva; modo: "cliente" | "fornecedor" }) {
     setBusy(true);
     const { error } = await supabase.from("reservas").update(campos).eq("id", r.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(msg);
     qc.invalidateQueries({ queryKey: ["reservas"] });
   }

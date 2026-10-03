@@ -7,7 +7,7 @@ export interface ResultadoDiagnostico {
   causa: string;
   passos: string[];
   accoes: ("atribuir_admin" | "atribuir_suporte" | "atribuir_empresa" | "confirmar_email")[];
-  contexto: Record<string, unknown>;
+  contexto: any;
 }
 
 async function exigirAdmin(supabase: any, userId: string) {
@@ -20,7 +20,7 @@ export const diagnosticarAcesso = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ email: z.string().trim().email().max(255), descricao: z.string().trim().min(5).max(2000) }).parse(d),
   )
-  .handler(async ({ data, context }): Promise<ResultadoDiagnostico & { id?: string }> => {
+  .handler(async ({ data, context }): Promise<ResultadoDiagnostico & { id: string | null }> => {
     await exigirAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = data.email.toLowerCase();
@@ -106,7 +106,7 @@ export const diagnosticarAcesso = createServerFn({ method: "POST" })
       .insert({ autor_id: context.userId, email_alvo: email, descricao: data.descricao, resultado: resultado as never })
       .select("id")
       .single();
-    return { ...resultado, id: guardado?.id };
+    return { ...resultado, id: guardado?.id ?? null };
   });
 
 export const accaoRapida = createServerFn({ method: "POST" })

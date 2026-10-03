@@ -1,3 +1,4 @@
+import { registarTentativa } from "@/lib/reservas";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";

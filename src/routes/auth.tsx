@@ -1,3 +1,4 @@
+import { registarTentativa } from "@/lib/reservas";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2, Mail } from "lucide-react";

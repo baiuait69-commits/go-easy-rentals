@@ -24,7 +24,7 @@ export const Route = createFileRoute("/admin-diagnostico")({
     ],
   }),
   component: () => (
-    <AdminGuard requireAdmin>
+    <AdminGuard requerFuncao="admin">
       <Diagnostico />
     </AdminGuard>
   ),
