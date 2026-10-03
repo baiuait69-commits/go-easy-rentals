@@ -52,7 +52,7 @@ function AdminReservas() {
 
   async function mudar(id: string, estado: EstadoReserva) {
     const { error } = await supabase.from("reservas").update({ estado }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Estado actualizado");
     qc.invalidateQueries({ queryKey: ["admin-reservas"] });
   }

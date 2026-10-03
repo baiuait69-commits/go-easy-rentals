@@ -51,9 +51,9 @@ export function ReservarDialog({ item, trigger, disabled }: { item: ItemReserva;
     if (!isNaN(di.getTime())) setFim(paraInput(new Date(di.getTime() + HORAS[p] * 3_600_000)));
   }
 
-  async function confirmar() {
-    if (!valido) return toast.error("A data de fim tem de ser depois do início.");
-    if (di.getTime() < Date.now() - 3_600_000) return toast.error("A data de início já passou.");
+  async function confirmar(): Promise<void> {
+    if (!valido) { toast.error("A data de fim tem de ser depois do início."); return; }
+    if (di.getTime() < Date.now() - 3_600_000) { toast.error("A data de início já passou."); return; }
     setBusy(true);
     const { data, error } = await supabase
       .from("reservas")
@@ -74,7 +74,7 @@ export function ReservarDialog({ item, trigger, disabled }: { item: ItemReserva;
       .select("numero")
       .single();
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Reserva ${data.numero} enviada`, { description: "Vai receber a confirmação do fornecedor." });
     setOpen(false);
     navigate({ to: "/reservas" });

@@ -1,3 +1,4 @@
+import { ReservarDialog } from "@/components/ReservarDialog";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft, Heart, MapPin } from "lucide-react";
