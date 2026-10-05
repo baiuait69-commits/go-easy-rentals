@@ -42,7 +42,7 @@ function Admin() {
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_partners" }, () => void load())
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_user_status" }, () => void load())
       .subscribe();
-    return () => { mounted = false; void supabase.removeChannel(channel); };
+    return () => { mounted = false; void supabase?.removeChannel(channel); };
   }, []);
   const liveReservations = dbReservations.length ? dbReservations.map((r) => ({ id: r.id, viaturaId: r.vehicle_id, cliente: r.client_name, periodo: r.period, total: Number(r.total || 0), commission: Number(r.commission || 0), estado: r.status, metodo: r.payment_method })) : reservas;
   const livePartners = dbPartners.length ? dbPartners.map((p) => ({ id: p.id, nome: p.name, nif: p.nif, zona: p.zone, frota: p.fleet, estado: p.status, plano: p.plan })) : parceiros;
@@ -50,7 +50,7 @@ function Admin() {
     const state = dbUserStatus.find((s) => s.user_id === u.id);
     return state ? { ...u, activo: state.active } : u;
   });
-  const pendentes = livePartners.filter((p) => p.estado === "Pendente"); const volume = liveReservations.reduce((a, p) => a + Number(p.total || 0), 0); const comissaoTotal = liveReservations.reduce((a, p) => a + Number(p.commission ?? Number(p.total || 0) * 0.12), 0);
+  const pendentes = livePartners.filter((p) => p.estado === "Pendente"); const volume = liveReservations.reduce((a, p) => a + Number(p.total || 0), 0); const comissaoTotal = liveReservations.reduce((a, p) => a + Number((p as { commission?: number }).commission ?? Number(p.total || 0) * 0.12), 0);
   const filtradas = useMemo(() => liveReservations.filter((r) => { const text = `${r.id} ${r.cliente} ${r.viaturaId}`.toLowerCase(); return (!search || text.includes(search.toLowerCase())) && (status === "Todos" || r.estado === status); }), [search, status]);
   const aprovar = async (id: string, nome: string) => { try { await updatePartnerStatus(id, "Aprovado"); setApproved((v) => [...new Set([...v, id])]); toast.success(nome + " aprovado com sucesso"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível aprovar."); } };
   const bloquear = async (id: string, nome: string) => { const user = liveUsers.find((u) => u.id === id); const blockedNow = blocked.includes(id) || user?.activo === false; try { await updateUserActive(id, !blockedNow); setBlocked((v) => !blockedNow ? [...v, id] : v.filter((x) => x !== id)); toast.success(nome + " actualizado"); } catch (e) { toast.error(e instanceof Error ? e.message : "Não foi possível actualizar."); } };
