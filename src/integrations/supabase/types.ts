@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertas_fraude: {
+        Row: {
+          created_at: string
+          descricao: string
+          gravidade: string
+          id: string
+          referencia: string | null
+          resolvido: boolean
+          tipo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          gravidade?: string
+          id?: string
+          referencia?: string | null
+          resolvido?: boolean
+          tipo: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          gravidade?: string
+          id?: string
+          referencia?: string | null
+          resolvido?: boolean
+          tipo?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       anuncio_fotos: {
         Row: {
           anuncio_id: string
@@ -49,90 +82,135 @@ export type Database = {
       anuncios: {
         Row: {
           ano: number | null
+          bem_verificado: boolean
           carga_m3: number | null
           categoria: Database["public"]["Enums"]["anuncio_categoria"]
           caucao: number
+          codigo_verificacao: string | null
           com_motorista: boolean
           combustivel: string | null
+          condicoes: string | null
           created_at: string
           descricao: string | null
           destaque: boolean
           disponivel: boolean
+          doc_inspecao: string | null
+          doc_seguro: string | null
+          doc_titularidade: string | null
+          e_proprietario: boolean
           entrega: boolean
           estado: Database["public"]["Enums"]["anuncio_estado"]
+          fotos_verificacao: Json
+          horas_uso: number | null
           id: string
           imagem: string | null
           lugares: number | null
           marca: string | null
+          matricula: string | null
           modelo: string | null
           municipio: string
+          numero_serie: string | null
+          operador_incluido: boolean
           owner_id: string
           preco_dia: number
           preco_hora: number | null
           preco_mes: number | null
           preco_semana: number | null
+          qualidade_titular: string | null
+          quilometragem: number | null
           subcategoria: string
           titulo: string
           transmissao: string | null
           updated_at: string
+          vin: string | null
         }
         Insert: {
           ano?: number | null
+          bem_verificado?: boolean
           carga_m3?: number | null
           categoria: Database["public"]["Enums"]["anuncio_categoria"]
           caucao?: number
+          codigo_verificacao?: string | null
           com_motorista?: boolean
           combustivel?: string | null
+          condicoes?: string | null
           created_at?: string
           descricao?: string | null
           destaque?: boolean
           disponivel?: boolean
+          doc_inspecao?: string | null
+          doc_seguro?: string | null
+          doc_titularidade?: string | null
+          e_proprietario?: boolean
           entrega?: boolean
           estado?: Database["public"]["Enums"]["anuncio_estado"]
+          fotos_verificacao?: Json
+          horas_uso?: number | null
           id?: string
           imagem?: string | null
           lugares?: number | null
           marca?: string | null
+          matricula?: string | null
           modelo?: string | null
           municipio: string
+          numero_serie?: string | null
+          operador_incluido?: boolean
           owner_id: string
           preco_dia: number
           preco_hora?: number | null
           preco_mes?: number | null
           preco_semana?: number | null
+          qualidade_titular?: string | null
+          quilometragem?: number | null
           subcategoria: string
           titulo: string
           transmissao?: string | null
           updated_at?: string
+          vin?: string | null
         }
         Update: {
           ano?: number | null
+          bem_verificado?: boolean
           carga_m3?: number | null
           categoria?: Database["public"]["Enums"]["anuncio_categoria"]
           caucao?: number
+          codigo_verificacao?: string | null
           com_motorista?: boolean
           combustivel?: string | null
+          condicoes?: string | null
           created_at?: string
           descricao?: string | null
           destaque?: boolean
           disponivel?: boolean
+          doc_inspecao?: string | null
+          doc_seguro?: string | null
+          doc_titularidade?: string | null
+          e_proprietario?: boolean
           entrega?: boolean
           estado?: Database["public"]["Enums"]["anuncio_estado"]
+          fotos_verificacao?: Json
+          horas_uso?: number | null
           id?: string
           imagem?: string | null
           lugares?: number | null
           marca?: string | null
+          matricula?: string | null
           modelo?: string | null
           municipio?: string
+          numero_serie?: string | null
+          operador_incluido?: boolean
           owner_id?: string
           preco_dia?: number
           preco_hora?: number | null
           preco_mes?: number | null
           preco_semana?: number | null
+          qualidade_titular?: string | null
+          quilometragem?: number | null
           subcategoria?: string
           titulo?: string
           transmissao?: string | null
           updated_at?: string
+          vin?: string | null
         }
         Relationships: []
       }
@@ -190,6 +268,99 @@ export type Database = {
         }
         Relationships: []
       }
+      historico_alteracoes: {
+        Row: {
+          antigo: string | null
+          autor_id: string | null
+          campo: string
+          created_at: string
+          id: string
+          novo: string | null
+          tabela: string
+          user_id: string | null
+        }
+        Insert: {
+          antigo?: string | null
+          autor_id?: string | null
+          campo: string
+          created_at?: string
+          id?: string
+          novo?: string | null
+          tabela: string
+          user_id?: string | null
+        }
+        Update: {
+          antigo?: string | null
+          autor_id?: string | null
+          campo?: string
+          created_at?: string
+          id?: string
+          novo?: string | null
+          tabela?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      kyc_fornecedor: {
+        Row: {
+          alvara: string | null
+          banco: string | null
+          certidao: string | null
+          contacto_empresa: string | null
+          created_at: string
+          denominacao: string | null
+          endereco: string | null
+          estado: Database["public"]["Enums"]["kyc_estado"]
+          iban: string | null
+          motivo: string | null
+          nif: string | null
+          representante: string | null
+          representante_bi: string | null
+          tipo: string
+          titular_conta: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alvara?: string | null
+          banco?: string | null
+          certidao?: string | null
+          contacto_empresa?: string | null
+          created_at?: string
+          denominacao?: string | null
+          endereco?: string | null
+          estado?: Database["public"]["Enums"]["kyc_estado"]
+          iban?: string | null
+          motivo?: string | null
+          nif?: string | null
+          representante?: string | null
+          representante_bi?: string | null
+          tipo?: string
+          titular_conta?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          alvara?: string | null
+          banco?: string | null
+          certidao?: string | null
+          contacto_empresa?: string | null
+          created_at?: string
+          denominacao?: string | null
+          endereco?: string | null
+          estado?: Database["public"]["Enums"]["kyc_estado"]
+          iban?: string | null
+          motivo?: string | null
+          nif?: string | null
+          representante?: string | null
+          representante_bi?: string | null
+          tipo?: string
+          titular_conta?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           created_at: string
@@ -232,7 +403,9 @@ export type Database = {
           comentario: string | null
           comissao: number | null
           created_at: string
+          em_analise: boolean
           estado: Database["public"]["Enums"]["reserva_estado"]
+          estado_pagamento: Database["public"]["Enums"]["pagamento_estado"]
           extras: Json
           fim: string
           fornecedor_id: string | null
@@ -243,6 +416,8 @@ export type Database = {
           local: string | null
           metodo_pagamento: string
           numero: string
+          referencia_pagamento: string | null
+          risco: string
           titulo: string
           total: number
           updated_at: string
@@ -255,7 +430,9 @@ export type Database = {
           comentario?: string | null
           comissao?: number | null
           created_at?: string
+          em_analise?: boolean
           estado?: Database["public"]["Enums"]["reserva_estado"]
+          estado_pagamento?: Database["public"]["Enums"]["pagamento_estado"]
           extras?: Json
           fim: string
           fornecedor_id?: string | null
@@ -266,6 +443,8 @@ export type Database = {
           local?: string | null
           metodo_pagamento: string
           numero?: string
+          referencia_pagamento?: string | null
+          risco?: string
           titulo: string
           total: number
           updated_at?: string
@@ -278,7 +457,9 @@ export type Database = {
           comentario?: string | null
           comissao?: number | null
           created_at?: string
+          em_analise?: boolean
           estado?: Database["public"]["Enums"]["reserva_estado"]
+          estado_pagamento?: Database["public"]["Enums"]["pagamento_estado"]
           extras?: Json
           fim?: string
           fornecedor_id?: string | null
@@ -289,6 +470,8 @@ export type Database = {
           local?: string | null
           metodo_pagamento?: string
           numero?: string
+          referencia_pagamento?: string | null
+          risco?: string
           titulo?: string
           total?: number
           updated_at?: string
@@ -357,6 +540,66 @@ export type Database = {
         }
         Relationships: []
       }
+      verificacoes: {
+        Row: {
+          contacto_emergencia: string | null
+          created_at: string
+          data_nascimento: string | null
+          doc_frente: string | null
+          doc_numero: string | null
+          doc_tipo: string
+          doc_verso: string | null
+          estado: Database["public"]["Enums"]["kyc_estado"]
+          morada: string | null
+          motivo: string | null
+          nome_completo: string | null
+          pagamento_validado: boolean
+          selfie: string | null
+          telefone: string | null
+          telefone_verificado: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contacto_emergencia?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          doc_frente?: string | null
+          doc_numero?: string | null
+          doc_tipo?: string
+          doc_verso?: string | null
+          estado?: Database["public"]["Enums"]["kyc_estado"]
+          morada?: string | null
+          motivo?: string | null
+          nome_completo?: string | null
+          pagamento_validado?: boolean
+          selfie?: string | null
+          telefone?: string | null
+          telefone_verificado?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          contacto_emergencia?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          doc_frente?: string | null
+          doc_numero?: string | null
+          doc_tipo?: string
+          doc_verso?: string | null
+          estado?: Database["public"]["Enums"]["kyc_estado"]
+          morada?: string | null
+          motivo?: string | null
+          nome_completo?: string | null
+          pagamento_validado?: boolean
+          selfie?: string | null
+          telefone?: string | null
+          telefone_verificado?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -369,6 +612,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      reputacao_fornecedor: { Args: { _uid: string }; Returns: Json }
     }
     Enums: {
       anuncio_categoria:
@@ -384,6 +628,14 @@ export type Database = {
         | "rejeitado"
         | "bloqueado"
       app_role: "admin" | "empresa" | "suporte"
+      kyc_estado: "nao_iniciado" | "pendente" | "aprovado" | "rejeitado"
+      pagamento_estado:
+        | "pendente"
+        | "pago_retido"
+        | "entregue"
+        | "recebido"
+        | "liberado"
+        | "reembolsado"
       reserva_estado:
         | "pendente"
         | "confirmada"
@@ -534,6 +786,15 @@ export const Constants = {
         "bloqueado",
       ],
       app_role: ["admin", "empresa", "suporte"],
+      kyc_estado: ["nao_iniciado", "pendente", "aprovado", "rejeitado"],
+      pagamento_estado: [
+        "pendente",
+        "pago_retido",
+        "entregue",
+        "recebido",
+        "liberado",
+        "reembolsado",
+      ],
       reserva_estado: [
         "pendente",
         "confirmada",

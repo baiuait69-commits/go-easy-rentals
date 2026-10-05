@@ -8,6 +8,13 @@
       "when": 1791052022387,
       "tag": "0000_auth_tentativas_diagnosticos",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791230451320,
+      "tag": "0001_kyc_antifraude",
+      "breakpoints": true
     }
   ]
 }
