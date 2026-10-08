@@ -15,6 +15,7 @@ import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
 import { Route as AdminCategoriasRouteImport } from './routes/admin-categorias'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin-diagnostico'
 import { Route as AdminDocumentosRouteImport } from './routes/admin-documentos'
+import { Route as AdminFraudeRouteImport } from './routes/admin-fraude'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminReservasRouteImport } from './routes/admin-reservas'
@@ -26,6 +27,7 @@ import { Route as MeusAnunciosRouteImport } from './routes/meus-anuncios'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as VerificacaoRouteImport } from './routes/verificacao'
 import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
@@ -61,6 +63,11 @@ const AdminDiagnosticoRoute = AdminDiagnosticoRouteImport.update({
 const AdminDocumentosRoute = AdminDocumentosRouteImport.update({
   id: '/admin-documentos',
   path: '/admin-documentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFraudeRoute = AdminFraudeRouteImport.update({
+  id: '/admin-fraude',
+  path: '/admin-fraude',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
@@ -118,6 +125,11 @@ const ReservasRoute = ReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerificacaoRoute = VerificacaoRouteImport.update({
+  id: '/verificacao',
+  path: '/verificacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnuncioIdRoute = AnuncioIdRouteImport.update({
   id: '/anuncio/$id',
   path: '/anuncio/$id',
@@ -158,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -169,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -183,6 +197,7 @@ export interface FileRoutesByTo {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -194,6 +209,7 @@ export interface FileRoutesByTo {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -209,6 +225,7 @@ export interface FileRoutesById {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -220,6 +237,7 @@ export interface FileRoutesById {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -236,6 +254,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -247,6 +266,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -261,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -272,6 +293,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -286,6 +308,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -297,6 +320,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -312,6 +336,7 @@ export interface RootRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
   AdminDocumentosRoute: typeof AdminDocumentosRoute
+  AdminFraudeRoute: typeof AdminFraudeRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminReservasRoute: typeof AdminReservasRoute
@@ -323,6 +348,7 @@ export interface RootRouteChildren {
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
+  VerificacaoRoute: typeof VerificacaoRoute
   AnuncioIdRoute: typeof AnuncioIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
@@ -373,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-documentos'
       fullPath: '/admin-documentos'
       preLoaderRoute: typeof AdminDocumentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-fraude': {
+      id: '/admin-fraude'
+      path: '/admin-fraude'
+      fullPath: '/admin-fraude'
+      preLoaderRoute: typeof AdminFraudeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-funcoes': {
@@ -452,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verificacao': {
+      id: '/verificacao'
+      path: '/verificacao'
+      fullPath: '/verificacao'
+      preLoaderRoute: typeof VerificacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/anuncio/$id': {
       id: '/anuncio/$id'
       path: '/anuncio/$id'
@@ -504,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
   AdminDocumentosRoute: AdminDocumentosRoute,
+  AdminFraudeRoute: AdminFraudeRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminReservasRoute: AdminReservasRoute,
@@ -515,6 +556,7 @@ const rootRouteChildren: RootRouteChildren = {
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
+  VerificacaoRoute: VerificacaoRoute,
   AnuncioIdRoute: AnuncioIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,

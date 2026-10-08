@@ -11,6 +11,7 @@ const links = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin-anuncios", label: "Anúncios", icon: CarFront },
   { to: "/admin-documentos", label: "Documentos", icon: FileCheck2 },
+  { to: "/admin-fraude", label: "Antifraude", icon: ShieldCheck },
   { to: "/admin-categorias", label: "Categorias", icon: Tags },
   { to: "/admin-funcoes", label: "Utilizadores & Funções", icon: Users },
 ] as const;

@@ -15,7 +15,7 @@ export const rotuloEstado: Record<EstadoReserva, string> = {
   rejeitada: "Rejeitada",
 };
 
-export const metodosPagamento = ["Multicaixa Express", "Cartão", "Transferência"] as const;
+export const metodosPagamento = ["Multicaixa Express", "Pagamento por referência", "Cartão"] as const;
 
 export const kzFmt = (v: number | null | undefined) =>
   `${new Intl.NumberFormat("pt-AO").format(Math.round(Number(v ?? 0)))} Kz`;
