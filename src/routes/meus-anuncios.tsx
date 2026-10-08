@@ -44,6 +44,13 @@ const vazio = {
   imagem: "",
   com_motorista: false,
   entrega: false,
+  titularidade: "proprio",
+  titular_nome: "",
+  vin_chassis: "",
+  matricula: "",
+  numero_serie: "",
+  codigo_temporario: "",
+  fotos: ["", "", "", "", "", ""],
 };
 
 function MeusAnuncios() {
@@ -68,7 +75,8 @@ function MeusAnuncios() {
 
   const criar = useMutation({
     mutationFn: async () => {
-      const client: any = supabase;\n      const { error } = await client.from("anuncios").insert({
+      const client: any = supabase;
+      const { data: anuncio, error } = await client.from("anuncios").insert({
         owner_id: user!.id,
         titulo: form.titulo.trim(),
         categoria: form.categoria,
@@ -81,8 +89,20 @@ function MeusAnuncios() {
         com_motorista: form.com_motorista,
         entrega: form.entrega,
         estado: "pendente",
-      });
+        titularidade: form.titularidade,
+        titular_nome: form.titular_nome.trim() || null,
+        vin_chassis: form.vin_chassis.trim() || null,
+        matricula: form.matricula.trim() || null,
+        numero_serie: form.numero_serie.trim() || null,
+        codigo_temporario: form.codigo_temporario.trim() || null,
+        fotos_obrigatorias_ok: form.fotos.every((foto) => foto.trim().length > 0),
+      }).select("id").single();
       if (error) throw error;
+      const fotos = form.fotos.map((url, ordem) => ({ anuncio_id: anuncio.id, url: url.trim(), ordem })).filter((foto) => foto.url);
+      if (fotos.length) {
+        const { error: fotosError } = await client.from("anuncio_fotos").insert(fotos);
+        if (fotosError) throw fotosError;
+      }
     },
     onSuccess: () => {
       toast.success("Anúncio enviado para aprovação.");
@@ -138,10 +158,10 @@ function MeusAnuncios() {
             className="space-y-3 rounded-2xl border border-border bg-card p-4"
             onSubmit={(e) => {
               e.preventDefault();
-              if (!form.titulo.trim()) {
-                toast.error("Indique o título.");
-                return;
-              }
+              if (!form.titulo.trim()) { toast.error("Indique o título."); return; }
+              if (!form.vin_chassis.trim() && form.categoria !== "servicos") { toast.error("Indique o VIN/chassis."); return; }
+              if (!form.matricula.trim() && form.categoria === "veiculos") { toast.error("Indique a matrícula."); return; }
+              if (form.fotos.some((foto) => !foto.trim())) { toast.error("Indique as 6 fotografias obrigatórias."); return; }
               criar.mutate();
             }}
           >
@@ -232,6 +252,39 @@ function MeusAnuncios() {
                   placeholder="/images/van-1.jpg"
                   className="mt-1 rounded-xl"
                 />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Titularidade</Label>
+                <Select value={form.titularidade} onValueChange={(v) => setForm({ ...form, titularidade: v })}>
+                  <SelectTrigger className="mt-1 rounded-xl"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="proprio">Próprio</SelectItem>
+                    <SelectItem value="empresa">Empresa</SelectItem>
+                    <SelectItem value="terceiro">Terceiro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="titular">Nome do titular</Label>
+                <Input id="titular" value={form.titular_nome} onChange={(e) => setForm({ ...form, titular_nome: e.target.value })} className="mt-1 rounded-xl" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label htmlFor="vin">VIN / Chassis</Label><Input id="vin" value={form.vin_chassis} onChange={(e) => setForm({ ...form, vin_chassis: e.target.value })} className="mt-1 rounded-xl" /></div>
+              <div><Label htmlFor="matricula">Matrícula</Label><Input id="matricula" value={form.matricula} onChange={(e) => setForm({ ...form, matricula: e.target.value })} className="mt-1 rounded-xl" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label htmlFor="serie">Número de série</Label><Input id="serie" value={form.numero_serie} onChange={(e) => setForm({ ...form, numero_serie: e.target.value })} className="mt-1 rounded-xl" /></div>
+              <div><Label htmlFor="codigo">Código temporário da fotografia</Label><Input id="codigo" value={form.codigo_temporario} onChange={(e) => setForm({ ...form, codigo_temporario: e.target.value })} className="mt-1 rounded-xl" /></div>
+            </div>
+            <div>
+              <Label>6 fotografias obrigatórias (links)</Label>
+              <div className="mt-1 grid gap-2">
+                {form.fotos.map((foto, index) => (
+                  <Input key={index} placeholder={`Fotografia ${index + 1}`} value={foto} onChange={(e) => setForm({ ...form, fotos: form.fotos.map((v, i) => i === index ? e.target.value : v) })} className="rounded-xl" />
+                ))}
               </div>
             </div>
             <div>
