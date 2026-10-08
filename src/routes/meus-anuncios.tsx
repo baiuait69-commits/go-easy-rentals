@@ -68,7 +68,7 @@ function MeusAnuncios() {
 
   const criar = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("anuncios").insert({
+      const client: any = supabase;\n      const { error } = await client.from("anuncios").insert({
         owner_id: user!.id,
         titulo: form.titulo.trim(),
         categoria: form.categoria,
