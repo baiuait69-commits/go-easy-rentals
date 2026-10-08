@@ -75,6 +75,14 @@ export type Database = {
           titulo: string
           transmissao: string | null
           updated_at: string
+          titularidade: string | null
+          titular_nome: string | null
+          vin_chassis: string | null
+          matricula: string | null
+          numero_serie: string | null
+          codigo_temporario: string | null
+          fotos_obrigatorias_ok: boolean
+          antifraude_estado: "pendente" | "aprovado" | "rejeitado" | "bloqueado"
         }
         Insert: {
           ano?: number | null
@@ -104,6 +112,14 @@ export type Database = {
           titulo: string
           transmissao?: string | null
           updated_at?: string
+          titularidade?: string | null
+          titular_nome?: string | null
+          vin_chassis?: string | null
+          matricula?: string | null
+          numero_serie?: string | null
+          codigo_temporario?: string | null
+          fotos_obrigatorias_ok?: boolean
+          antifraude_estado?: "pendente" | "aprovado" | "rejeitado" | "bloqueado"
         }
         Update: {
           ano?: number | null
@@ -133,6 +149,14 @@ export type Database = {
           titulo?: string
           transmissao?: string | null
           updated_at?: string
+          titularidade?: string | null
+          titular_nome?: string | null
+          vin_chassis?: string | null
+          matricula?: string | null
+          numero_serie?: string | null
+          codigo_temporario?: string | null
+          fotos_obrigatorias_ok?: boolean
+          antifraude_estado?: "pendente" | "aprovado" | "rejeitado" | "bloqueado"
         }
         Relationships: []
       }
@@ -152,6 +176,19 @@ export type Database = {
           tipo_conta: Database["public"]["Enums"]["tipo_conta"]
           updated_at: string
           verificado: boolean
+          data_nascimento: string | null
+          morada: string | null
+          documento_tipo: string | null
+          documento_numero: string | null
+          documento_frente_url: string | null
+          documento_verso_url: string | null
+          selfie_url: string | null
+          nif: string | null
+          iban: string | null
+          certidao_url: string | null
+          alvara_url: string | null
+          representante_legal: string | null
+          verificacao_estado: "pendente" | "aprovado" | "rejeitado"
         }
         Insert: {
           created_at?: string
@@ -162,6 +199,19 @@ export type Database = {
           tipo_conta?: Database["public"]["Enums"]["tipo_conta"]
           updated_at?: string
           verificado?: boolean
+          data_nascimento?: string | null
+          morada?: string | null
+          documento_tipo?: string | null
+          documento_numero?: string | null
+          documento_frente_url?: string | null
+          documento_verso_url?: string | null
+          selfie_url?: string | null
+          nif?: string | null
+          iban?: string | null
+          certidao_url?: string | null
+          alvara_url?: string | null
+          representante_legal?: string | null
+          verificacao_estado?: "pendente" | "aprovado" | "rejeitado"
         }
         Update: {
           created_at?: string
@@ -172,6 +222,19 @@ export type Database = {
           tipo_conta?: Database["public"]["Enums"]["tipo_conta"]
           updated_at?: string
           verificado?: boolean
+          data_nascimento?: string | null
+          morada?: string | null
+          documento_tipo?: string | null
+          documento_numero?: string | null
+          documento_frente_url?: string | null
+          documento_verso_url?: string | null
+          selfie_url?: string | null
+          nif?: string | null
+          iban?: string | null
+          certidao_url?: string | null
+          alvara_url?: string | null
+          representante_legal?: string | null
+          verificacao_estado?: "pendente" | "aprovado" | "rejeitado"
         }
         Relationships: []
       }
@@ -198,6 +261,12 @@ export type Database = {
           titulo: string
           total: number
           updated_at: string
+          nivel_risco: "baixo" | "medio" | "alto"
+          bloqueada_antifraude: boolean
+          estado_pagamento: "pendente" | "retido" | "confirmado" | "reembolsado" | "pago_fornecedor"
+          entregue_em: string | null
+          recepcao_confirmada_em: string | null
+          recepcao_confirmada_por: string | null
         }
         Insert: {
           anuncio_id?: string | null
@@ -221,6 +290,12 @@ export type Database = {
           titulo: string
           total: number
           updated_at?: string
+          nivel_risco?: "baixo" | "medio" | "alto"
+          bloqueada_antifraude?: boolean
+          estado_pagamento?: "pendente" | "retido" | "confirmado" | "reembolsado" | "pago_fornecedor"
+          entregue_em?: string | null
+          recepcao_confirmada_em?: string | null
+          recepcao_confirmada_por?: string | null
         }
         Update: {
           anuncio_id?: string | null
@@ -244,6 +319,12 @@ export type Database = {
           titulo?: string
           total?: number
           updated_at?: string
+          nivel_risco?: "baixo" | "medio" | "alto"
+          bloqueada_antifraude?: boolean
+          estado_pagamento?: "pendente" | "retido" | "confirmado" | "reembolsado" | "pago_fornecedor"
+          entregue_em?: string | null
+          recepcao_confirmada_em?: string | null
+          recepcao_confirmada_por?: string | null
         }
         Relationships: [
           {
