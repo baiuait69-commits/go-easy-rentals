@@ -15,6 +15,7 @@ import { Route as AdminAnunciosRouteImport } from './routes/admin-anuncios'
 import { Route as AdminCategoriasRouteImport } from './routes/admin-categorias'
 import { Route as AdminDiagnosticoRouteImport } from './routes/admin-diagnostico'
 import { Route as AdminDocumentosRouteImport } from './routes/admin-documentos'
+import { Route as AdminFraudeRouteImport } from './routes/admin-fraude'
 import { Route as AdminFuncoesRouteImport } from './routes/admin-funcoes'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminReservasRouteImport } from './routes/admin-reservas'
@@ -62,6 +63,11 @@ const AdminDiagnosticoRoute = AdminDiagnosticoRouteImport.update({
 const AdminDocumentosRoute = AdminDocumentosRouteImport.update({
   id: '/admin-documentos',
   path: '/admin-documentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFraudeRoute = AdminFraudeRouteImport.update({
+  id: '/admin-fraude',
+  path: '/admin-fraude',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFuncoesRoute = AdminFuncoesRouteImport.update({
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/admin-categorias': typeof AdminCategoriasRoute
   '/admin-diagnostico': typeof AdminDiagnosticoRoute
   '/admin-documentos': typeof AdminDocumentosRoute
+  '/admin-fraude': typeof AdminFraudeRoute
   '/admin-funcoes': typeof AdminFuncoesRoute
   '/admin-login': typeof AdminLoginRoute
   '/admin-reservas': typeof AdminReservasRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/admin-categorias'
     | '/admin-diagnostico'
     | '/admin-documentos'
+    | '/admin-fraude'
     | '/admin-funcoes'
     | '/admin-login'
     | '/admin-reservas'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminDiagnosticoRoute: typeof AdminDiagnosticoRoute
   AdminDocumentosRoute: typeof AdminDocumentosRoute
+  AdminFraudeRoute: typeof AdminFraudeRoute
   AdminFuncoesRoute: typeof AdminFuncoesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminReservasRoute: typeof AdminReservasRoute
@@ -386,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-documentos'
       fullPath: '/admin-documentos'
       preLoaderRoute: typeof AdminDocumentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-fraude': {
+      id: '/admin-fraude'
+      path: '/admin-fraude'
+      fullPath: '/admin-fraude'
+      preLoaderRoute: typeof AdminFraudeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-funcoes': {
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminDiagnosticoRoute: AdminDiagnosticoRoute,
   AdminDocumentosRoute: AdminDocumentosRoute,
+  AdminFraudeRoute: AdminFraudeRoute,
   AdminFuncoesRoute: AdminFuncoesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminReservasRoute: AdminReservasRoute,
