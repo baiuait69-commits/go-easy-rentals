@@ -88,7 +88,7 @@ function Reservas() {
 function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
-  async function actualizar(patch: Partial<Reserva>, ok: string) {
+  async function actualizar(patch: Record<string, unknown>, ok: string) {
     if (busy) return;
     setBusy(true);
     const { data, error } = await supabase.from("reservas").update(patch).eq("id", r.id).select("id").maybeSingle();
@@ -154,7 +154,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
       {papel === "fornecedor" && r.estado === "confirmada" && (
         <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao" }, "Marcada em utilização")}>Marcar "Em utilização"</Button></div>
       )}
-      {papel === "fornecedor" && r.estado === "confirmada" && !extra.entregue_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao" } as Partial<Reserva>, "Entrega registada; reserva em utilização")}>Marcar "Entregue"</Button></div>\n      )}\n      {papel === "cliente" && r.estado === "em_utilizacao" && extra.entregue_em && !extra.recepcao_confirmada_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao" } as Partial<Reserva>, "Receção confirmada")}>Confirmar receção</Button></div>\n      )}\n      {papel === "fornecedor" && r.estado === "em_utilizacao" && (
+      {papel === "fornecedor" && r.estado === "confirmada" && !extra.entregue_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", entregue_em: new Date().toISOString(), estado_pagamento: "retido" }, "Entrega registada; pagamento retido") }>Marcar "Entregue"</Button></div>\n      )}\n      {papel === "cliente" && r.estado === "em_utilizacao" && extra.entregue_em && !extra.recepcao_confirmada_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", recepcao_confirmada_em: new Date().toISOString(), recepcao_confirmada_por: r.cliente_id, estado_pagamento: "confirmado" }, "Receção confirmada; pagamento libertado") }>Confirmar receção</Button></div>\n      )}\n      {papel === "fornecedor" && r.estado === "em_utilizacao" && (
         <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "concluida" }, "Reserva concluída")}>Marcar "Concluída"</Button></div>
       )}
     </article>
