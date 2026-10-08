@@ -111,7 +111,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
     const total = Math.round((Number(r.total) + porDia) * 100) / 100;
     void actualizar({ fim: new Date(new Date(r.fim).getTime() + dia).toISOString(), total }, "Aluguer estendido por mais 1 dia");
   }
-  const extra = r as Reserva & { estado_pagamento?: string; entregue_em?: string | null; recepcao_confirmada_em?: string | null };\n  const fmt = (d: string) => new Date(d).toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const extra = r as Reserva & { estado_pagamento?: string; entregue_em?: string | null; recepcao_confirmada_em?: string | null };  const fmt = (d: string) => new Date(d).toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
   return (
     <article className="overflow-hidden rounded-3xl border border-border bg-card">
@@ -123,7 +123,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
             <Badge variant={r.estado === "pendente" ? "secondary" : r.estado === "cancelada" || r.estado === "rejeitada" ? "destructive" : "default"}>{rotuloEstado[r.estado]}</Badge>
           </div>
           <p className="text-xs text-muted-foreground">{r.numero} · {fmt(r.inicio)} → {fmt(r.fim)}</p>
-          <p className="text-xs text-muted-foreground">{r.metodo_pagamento}{r.local ? ` · ${r.local}` : ""}</p>\n          <p className="text-xs font-medium">Pagamento: {extra.estado_pagamento === "retido" ? "Retido na plataforma" : extra.estado_pagamento === "confirmado" ? "Confirmado" : extra.estado_pagamento === "pago_fornecedor" ? "Pago ao fornecedor" : "Pendente"}</p>
+          <p className="text-xs text-muted-foreground">{r.metodo_pagamento}{r.local ? ` · ${r.local}` : ""}</p>          <p className="text-xs font-medium">Pagamento: {extra.estado_pagamento === "retido" ? "Retido na plataforma" : extra.estado_pagamento === "confirmado" ? "Confirmado" : extra.estado_pagamento === "pago_fornecedor" ? "Pago ao fornecedor" : "Pendente"}</p>
           <p className="mt-1 font-display text-accent">{kz(r.total)}{papel === "fornecedor" && <span className="ml-2 text-xs text-muted-foreground">recebe {kz(Number(r.total) - Number(r.comissao ?? 0))}</span>}</p>
         </div>
       </div>
@@ -154,7 +154,7 @@ function Cartao({ r, papel }: { r: Reserva; papel: "cliente" | "fornecedor" }) {
       {papel === "fornecedor" && r.estado === "confirmada" && (
         <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao" }, "Marcada em utilização")}>Marcar "Em utilização"</Button></div>
       )}
-      {papel === "fornecedor" && r.estado === "confirmada" && !extra.entregue_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", entregue_em: new Date().toISOString(), estado_pagamento: "retido" }, "Entrega registada; pagamento retido") }>Marcar "Entregue"</Button></div>\n      )}\n      {papel === "cliente" && r.estado === "em_utilizacao" && extra.entregue_em && !extra.recepcao_confirmada_em && (\n        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", recepcao_confirmada_em: new Date().toISOString(), recepcao_confirmada_por: r.cliente_id, estado_pagamento: "confirmado" }, "Receção confirmada; pagamento libertado") }>Confirmar receção</Button></div>\n      )}\n      {papel === "fornecedor" && r.estado === "em_utilizacao" && (
+      {papel === "fornecedor" && r.estado === "confirmada" && !extra.entregue_em && (        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", entregue_em: new Date().toISOString(), estado_pagamento: "retido" }, "Entrega registada; pagamento retido") }>Marcar "Entregue"</Button></div>      )}      {papel === "cliente" && r.estado === "em_utilizacao" && extra.entregue_em && !extra.recepcao_confirmada_em && (        <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "em_utilizacao", recepcao_confirmada_em: new Date().toISOString(), recepcao_confirmada_por: r.cliente_id, estado_pagamento: "confirmado" }, "Receção confirmada; pagamento libertado") }>Confirmar receção</Button></div>      )}      {papel === "fornecedor" && r.estado === "em_utilizacao" && (
         <div className="border-t border-border p-3"><Button className="w-full rounded-xl" disabled={busy} onClick={() => actualizar({ estado: "concluida" }, "Reserva concluída")}>Marcar "Concluída"</Button></div>
       )}
     </article>
