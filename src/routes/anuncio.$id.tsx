@@ -1,4 +1,5 @@
 import { ReservarDialog } from "@/components/ReservarDialog";
+import { AvisoPagamento, SeloFornecedor } from "@/components/Antifraude";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPin, ShieldCheck, Truck, UserRound } from "lucide-react";
@@ -135,6 +136,9 @@ function DetalheAnuncio() {
           {anuncio.lugares && <Ficha rotulo="Lugares" valor={String(anuncio.lugares)} />}
           {anuncio.carga_m3 && <Ficha rotulo="Carga" valor={`${anuncio.carga_m3} m³`} />}
         </ul>
+
+        <SeloFornecedor ownerId={anuncio.owner_id} bemVerificado={anuncio.bem_verificado} />
+        <AvisoPagamento />
 
         <ReservarDialog
           disabled={!anuncio.disponivel}

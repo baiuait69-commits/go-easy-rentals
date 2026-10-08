@@ -26,6 +26,7 @@ import { Route as MeusAnunciosRouteImport } from './routes/meus-anuncios'
 import { Route as MudancasRouteImport } from './routes/mudancas'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ReservasRouteImport } from './routes/reservas'
+import { Route as VerificacaoRouteImport } from './routes/verificacao'
 import { Route as AnuncioIdRouteImport } from './routes/anuncio.$id'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as ViaturaIdRouteImport } from './routes/viatura.$id'
@@ -118,6 +119,11 @@ const ReservasRoute = ReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerificacaoRoute = VerificacaoRouteImport.update({
+  id: '/verificacao',
+  path: '/verificacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnuncioIdRoute = AnuncioIdRouteImport.update({
   id: '/anuncio/$id',
   path: '/anuncio/$id',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/mudancas': typeof MudancasRoute
   '/perfil': typeof PerfilRoute
   '/reservas': typeof ReservasRoute
+  '/verificacao': typeof VerificacaoRoute
   '/anuncio/$id': typeof AnuncioIdRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/viatura/$id': typeof ViaturaIdRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/mudancas'
     | '/perfil'
     | '/reservas'
+    | '/verificacao'
     | '/anuncio/$id'
     | '/produto/$id'
     | '/viatura/$id'
@@ -323,6 +335,7 @@ export interface RootRouteChildren {
   MudancasRoute: typeof MudancasRoute
   PerfilRoute: typeof PerfilRoute
   ReservasRoute: typeof ReservasRoute
+  VerificacaoRoute: typeof VerificacaoRoute
   AnuncioIdRoute: typeof AnuncioIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ViaturaIdRoute: typeof ViaturaIdRoute
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verificacao': {
+      id: '/verificacao'
+      path: '/verificacao'
+      fullPath: '/verificacao'
+      preLoaderRoute: typeof VerificacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/anuncio/$id': {
       id: '/anuncio/$id'
       path: '/anuncio/$id'
@@ -515,6 +535,7 @@ const rootRouteChildren: RootRouteChildren = {
   MudancasRoute: MudancasRoute,
   PerfilRoute: PerfilRoute,
   ReservasRoute: ReservasRoute,
+  VerificacaoRoute: VerificacaoRoute,
   AnuncioIdRoute: AnuncioIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ViaturaIdRoute: ViaturaIdRoute,

@@ -167,7 +167,7 @@ function Fornecedor({ userId }: { userId: string }) {
 
   async function guardar() {
     if (!f.nif || !f.iban || !f.titular_conta || !f.endereco) { toast.error("Preencha NIF, endereço, IBAN e titular da conta."); return; }
-    if (!/^AO\d{2}[\d ]{15,}$/i.test(f.iban.replace(/\s/g, "").replace(/^(AO\d{2})/i, "$1 "))) { toast.error("IBAN angolano inválido (AO06…)."); return; }
+    if (!/^AO\d{23}$/i.test(f.iban.replace(/\s/g, ""))) { toast.error("IBAN angolano inválido (AO06…)."); return; }
     if (empresa && (!f.denominacao || !f.certidao || !f.representante || !f.representante_bi || !f.contacto_empresa)) {
       toast.error("Empresa: denominação, certidão, representante, BI do representante e contacto são obrigatórios."); return;
     }
