@@ -50,7 +50,7 @@ const vazio = {
   matricula: "",
   numero_serie: "",
   codigo_temporario: "",
-  fotos: ["", "", "", "", "", ""],
+  fotos: ["", "", "", "", "", "", ""],
 };
 
 function MeusAnuncios() {
@@ -161,7 +161,7 @@ function MeusAnuncios() {
               if (!form.titulo.trim()) { toast.error("Indique o título."); return; }
               if (!form.vin_chassis.trim() && form.categoria !== "servicos") { toast.error("Indique o VIN/chassis."); return; }
               if (!form.matricula.trim() && form.categoria === "veiculos") { toast.error("Indique a matrícula."); return; }
-              if (form.fotos.some((foto) => !foto.trim())) { toast.error("Indique as 6 fotografias obrigatórias."); return; }
+              if (form.fotos.some((foto) => !foto.trim() || !/^https?:\/\//i.test(foto.trim()))) { toast.error("Preencha os 7 links de fotografia com URLs válidos."); return; }
               criar.mutate();
             }}
           >
@@ -280,10 +280,11 @@ function MeusAnuncios() {
               <div><Label htmlFor="codigo">Código temporário da fotografia</Label><Input id="codigo" value={form.codigo_temporario} onChange={(e) => setForm({ ...form, codigo_temporario: e.target.value })} className="mt-1 rounded-xl" /></div>
             </div>
             <div>
-              <Label>6 fotografias obrigatórias (links)</Label>
+              <Label>7 fotografias obrigatórias (links)</Label>
+              <p className="mt-1 text-xs text-muted-foreground">Preencha os sete links. O envio só fica disponível quando todos estiverem preenchidos com URLs válidos.</p>
               <div className="mt-1 grid gap-2">
                 {form.fotos.map((foto, index) => (
-                  <Input key={index} placeholder={`Fotografia ${index + 1}`} value={foto} onChange={(e) => setForm({ ...form, fotos: form.fotos.map((v, i) => i === index ? e.target.value : v) })} className="rounded-xl" />
+                  <Input key={index} type="url" placeholder={`Link da fotografia ${index + 1} (https://...)`} value={foto} onChange={(e) => setForm({ ...form, fotos: form.fotos.map((v, i) => i === index ? e.target.value : v) })} className="rounded-xl" />
                 ))}
               </div>
             </div>
@@ -312,7 +313,7 @@ function MeusAnuncios() {
                 onCheckedChange={(v) => setForm({ ...form, entrega: v })}
               />
             </div>
-            <Button type="submit" className="h-12 w-full rounded-2xl" disabled={criar.isPending}>
+            <Button type="submit" className="h-12 w-full rounded-2xl" disabled={criar.isPending || form.fotos.length !== 7 || form.fotos.some((foto) => !foto.trim() || !/^https?:\/\//i.test(foto.trim()))}>
               {criar.isPending ? "A enviar…" : "Enviar para aprovação"}
             </Button>
           </form>
