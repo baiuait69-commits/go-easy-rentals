@@ -48,7 +48,12 @@ function AdminLogin() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && roles.length > 0) navigate({ to: "/admin", replace: true });
+    if (loading || roles.length === 0) return;
+    if (roles.includes("admin") || roles.includes("suporte")) {
+      navigate({ to: "/admin", replace: true });
+    } else if (roles.includes("empresa")) {
+      navigate({ to: "/empresa", replace: true });
+    }
   }, [loading, roles, navigate]);
 
   async function entrar() {
@@ -78,14 +83,18 @@ function AdminLogin() {
     }
 
     const roles = (funcoes ?? []).map((item) => item.role);
-    if (!roles.includes("admin")) {
+    if (!roles.some((role) => ["admin", "empresa", "suporte"].includes(role))) {
       await supabase.auth.signOut();
-      toast.error("Esta conta não tem a função de gestor (admin).");
+      toast.error("Esta conta não tem uma função autorizada para o painel.");
       return;
     }
 
-    toast.success("Sessão de gestão iniciada");
-    navigate({ to: "/admin", replace: true });
+    toast.success("Sessão iniciada");
+    if (roles.includes("admin") || roles.includes("suporte")) {
+      navigate({ to: "/admin", replace: true });
+    } else {
+      navigate({ to: "/empresa", replace: true });
+    }
   }
 
   async function criarConta() {
